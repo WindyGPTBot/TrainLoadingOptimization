@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from typing import List
+
 from Runtimes.Environment import Environment
 from Runtimes.Configuration import Configuration
 import datetime
@@ -15,7 +17,7 @@ class Event(ABC):
 
 
     @abstractmethod
-    def fire(self, environment: Environment) -> list['Event']:
+    def fire(self, environment: Environment):
         """
         Fire the event
         Args:

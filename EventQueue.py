@@ -10,6 +10,5 @@ class EventQueue():
         self.events = []
 
     def get_next(self):
-        result = self.events.sort(key=lambda e: e.timestamp)[0]
-        self.events.remove(0)
-        return result
+        self.events.sort(key=lambda e: e.timestamp)
+        return self.events.pop(0)

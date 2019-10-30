@@ -1,4 +1,5 @@
 import datetime
+from typing import List
 
 from Components.LightStatus import LightStatus
 from Events.Event import Event
@@ -22,7 +23,7 @@ class ReceiveWeightEvent(Event):
         """
         super().__init__(timestamp, configuration)
 
-    def fire(self, environment: Environment) -> list[Event]:
+    def fire(self, environment: Environment) -> List[Event]:
         # Compute the total weight by max train car capacity times the passenger mean weight
         max_weight = self.configuration.train_capacity * self.configuration.passenger_mean_weight
         # The yellow threshold is below 75% of the max weight
