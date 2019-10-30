@@ -18,8 +18,8 @@ class Station(PopulatableComponent):
         Args:
             configuration: The configuration to create the station with
         """
-        super().__init__(configuration)
         self.__sectors = Station.__create_sectors(configuration)
+        super().__init__(configuration)
 
     def populate(self) -> None:
         """
@@ -79,4 +79,3 @@ class Station(PopulatableComponent):
         for i in range(configuration.station_sector_count):
             sectors.append(StationSector(configuration, i))
         return sectors
-
