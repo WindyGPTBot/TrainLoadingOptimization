@@ -13,8 +13,9 @@ class Event(ABC):
         self.configuration = configuration
         self.timestamp = timestamp
 
+
     @abstractmethod
-    def fire(self, environment: Environment):
+    def fire(self, environment: Environment) -> list['Event']:
         """
         Fire the event
         Args:

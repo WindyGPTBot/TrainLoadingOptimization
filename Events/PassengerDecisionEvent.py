@@ -16,7 +16,7 @@ class PassengerDecisionEvent(Event):
     based on their decisions.
     """
 
-    def fire(self, environment: Environment) -> None:
+    def fire(self, environment: Environment) -> list[Event]:
 
         for sector in environment.station.sectors:
             light_status = sector.light.status

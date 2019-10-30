@@ -11,7 +11,7 @@ class WeighTrainEvent(Event):
     Event when the train gets weighed.
     The train is weighed by summing all the passenger weights together
     """
-    def __init__(self, timestamp: datetime, configuration: Configuration):
+    def __init__(self, timestamp: datetime, configuration: Configuration) -> list[Event]:
         super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment):
