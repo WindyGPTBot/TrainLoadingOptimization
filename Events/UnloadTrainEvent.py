@@ -8,7 +8,7 @@ class UnloadTrainEvent(Event):
     Event representing the unloading of passengers
     """
 
-    def fire(self, environment: Environment) -> None:
+    def fire(self, environment: Environment):
         # The configuration that tells us the percentage range
         # of how much each car should randomly unload at the station.
         unload_range = self.configuration.train_unload_percent

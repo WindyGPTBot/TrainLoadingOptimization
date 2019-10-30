@@ -1,3 +1,5 @@
+import datetime
+
 from Components.LightStatus import LightStatus
 from Events.Event import Event
 from Runtimes.Configuration import Configuration
@@ -12,15 +14,15 @@ class ReceiveWeightEvent(Event):
     and then lighting the station lights accordingly.
     """
 
-    def __init__(self, configuration: Configuration):
+    def __init__(self, timestamp: datetime, configuration: Configuration):
         """
         Initialize the receive weight event.
         Args:
             configuration: The simulation configuration
         """
-        super().__init__(configuration)
+        super().__init__(timestamp, configuration)
 
-    def fire(self, environment: Environment) -> None:
+    def fire(self, environment: Environment):
         # Compute the total weight by max train car capacity times the passenger mean weight
         max_weight = self.configuration.train_capacity * self.configuration.passenger_mean_weight
         # The yellow threshold is below 75% of the max weight
