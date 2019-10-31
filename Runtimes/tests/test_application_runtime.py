@@ -1,6 +1,6 @@
 import unittest
 from Distributions.NormalDistribution import NormalDistribution
-from Runtimes import Environment, Configuration, ApplicationRuntime
+from Runtimes import ApplicationRuntime
 
 
 class TestPassengerDecisionEvent(unittest.TestCase):
@@ -30,16 +30,12 @@ class TestPassengerDecisionEvent(unittest.TestCase):
         }
         self.runtime = ApplicationRuntime.ApplicationRunTime(self.options)
 
-    def test_station_lights(self):
-        """
-        Test whether the non-marginal station sectors have light.
-        """
-        self.runtime.run()
 
-        for sector in self.runtime.environment.station.sectors:
-            # @TODO: When is a sector relevant to check the light? Always?
-            if sector.passengers:
-                self.assertIsNone(sector.light)
+    def test_can_start_runtime(self):
+        """
+        Test if the application runtime can be started.
+        """
+        self.assertIsNone(self.runtime.run())
 
     def tearDown(self) -> None:
         pass
