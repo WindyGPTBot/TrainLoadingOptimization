@@ -95,7 +95,7 @@ class PassengerDecisionEvent(Event):
                           environment: Environment) -> None:
         """
         Helper function that move the passengers from on sector to another.
-        Will randomly choose a number between 0% and 100% of the from_index sector
+        Will randomly choose a number (of passengers) between 0% and 100% of the from_index sector
         that will be moved to the to_index sector.
         Args:
             from_index: The sector index where we will move passengers from

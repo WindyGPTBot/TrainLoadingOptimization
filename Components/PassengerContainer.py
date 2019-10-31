@@ -15,6 +15,9 @@ class PassengerContainer:
         """
         self.__passengers = []
 
+    def __repr__(self):
+        return self.__str__()
+
     @property
     def amount(self) -> int:
         """

@@ -21,6 +21,9 @@ class Station(PopulatableComponent):
         self.__sectors = Station.__create_sectors(configuration)
         super().__init__(configuration)
 
+    def __str__(self):
+        return 'Station ({})'.format(','.join([x for x in self.sectors]))
+
     def populate(self) -> None:
         """
         Populate the station sectors

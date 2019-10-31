@@ -17,6 +17,13 @@ class StationSector(PassengerContainer):
         self.__light = Light(configuration)
         super().__init__()
 
+    def __str__(self):
+        """
+        Giving a nice representation for this object in case print() is called on it.
+        Returns: Human-readable string
+        """
+        return 'Station Sector (i: {}, {})'.format(self.sector_index, self.light)
+
     @property
     def light(self) -> Light:
         """
