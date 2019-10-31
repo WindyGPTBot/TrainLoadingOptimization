@@ -22,7 +22,7 @@ class Station(PopulatableComponent):
         super().__init__(configuration)
 
     def __str__(self):
-        return 'Station ({})'.format(','.join([x for x in self.sectors]))
+        return 'Station ({})'.format(', '.join([x for x in self.sectors]))
 
     def populate(self) -> None:
         """

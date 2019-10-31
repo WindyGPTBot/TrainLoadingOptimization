@@ -37,7 +37,7 @@ class TestPassengerDecisionEvent(unittest.TestCase):
         self.runtime.run()
 
         for sector in self.runtime.environment.station.sectors:
-            # @TODO: When is a sector relevant to check the light? Always?
+            # @TODO: When is a sector relevant to check the light? Always? Maybe we should light red in empty locations
             if sector.passengers:
                 self.assertIsNone(sector.light)
 
