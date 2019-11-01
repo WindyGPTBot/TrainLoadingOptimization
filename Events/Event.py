@@ -1,10 +1,11 @@
+import logging
 from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import List
 
-from Runtimes.Environment import Environment
 from Runtimes.Configuration import Configuration
-import datetime
-import logging
+from Runtimes.Environment import Environment
+
 
 class Event(ABC):
     """
@@ -15,9 +16,8 @@ class Event(ABC):
         self.configuration = configuration
         self.timestamp = timestamp
 
-
     @abstractmethod
-    def fire(self, environment: Environment):
+    def fire(self, environment: Environment) -> List[Event]:
         """
         Fire the event
         Args:

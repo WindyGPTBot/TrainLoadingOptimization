@@ -5,9 +5,9 @@ from Components.LightStatus import LightStatus
 from Components.Passenger import Passenger
 from Components.StationSector import StationSector
 from Events.Event import Event
+from Helpers.Ranges import random_between_range
 from Runtimes import Configuration
 from Runtimes.Environment import Environment
-from Helpers.Ranges import random_between_range
 
 
 class PassengerDecisionEvent(Event):
@@ -21,7 +21,7 @@ class PassengerDecisionEvent(Event):
         super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment) -> List[Event]:
-        super().log_event()
+        self.log_event()
         for sector in environment.station.sectors:
             light_status = sector.light.status
             # The passengers stay if they are in a green sector
@@ -218,5 +218,9 @@ class PassengerDecisionEvent(Event):
         amount = random_between_range(range(0, environment.station.sectors[from_index].amount))
         # Remove the passengers from the sector
         passengers = environment.station.sectors[from_index].remove(amount)
+        # Add the passengers who are not compliant back to the from sector
+        for i, passenger in enumerate(passengers):
+            if not passenger.is_compliant() or passenger.max_walk == 0:
+                environment.station.sectors[from_index].add(passengers.pop(i))
         # Move them to the new sector
         environment.station.sectors[to_index].add(passengers)
