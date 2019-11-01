@@ -10,8 +10,9 @@ from Runtimes.Environment import Environment
 
 class LoadPassengerEvent(Event):
     """
-    Event representing the unloading of passengers
+    Event representing the loading of passengers
     """
+
     def __init__(self, timestamp: datetime, configuration: Configuration):
         super().__init__(timestamp, configuration)
 
