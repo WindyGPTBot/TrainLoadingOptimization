@@ -1,5 +1,9 @@
+import datetime
+from typing import List
+
 from Components.LightStatus import LightStatus
 from Events.Event import Event
+from Events.PassengerDecisionEvent import PassengerDecisionEvent
 from Runtimes.Configuration import Configuration
 from Runtimes.Environment import Environment
 from Helpers.Ranges import random_between_range
@@ -12,15 +16,16 @@ class ReceiveWeightEvent(Event):
     and then lighting the station lights accordingly.
     """
 
-    def __init__(self, configuration: Configuration):
+    def __init__(self, timestamp: datetime, configuration: Configuration):
         """
         Initialize the receive weight event.
         Args:
             configuration: The simulation configuration
         """
-        super().__init__(configuration)
+        super().__init__(timestamp, configuration)
 
-    def fire(self, environment: Environment) -> None:
+    def fire(self, environment: Environment) -> List[Event]:
+        super().log_event()
         # Compute the total weight by max train car capacity times the passenger mean weight
         max_weight = self.configuration.train_capacity * self.configuration.passenger_mean_weight
         # Get the light thresholds from the configuration, which we will use
@@ -40,7 +45,7 @@ class ReceiveWeightEvent(Event):
             # Otherwise we will just continue.
             if i < environment.train.parked_at:
                 continue
-            if i > environment.train.parked_at + environment.train.train_car_length():
+            if i > environment.train.parked_at + environment.train.train_car_length:
                 break
 
             # Get the train car at the current sector. We minus by the index where the train is parked,
@@ -57,6 +62,7 @@ class ReceiveWeightEvent(Event):
                 ReceiveWeightEvent.__set_light_status(sector.sector_index, LightStatus.YELLOW, environment)
             else:
                 ReceiveWeightEvent.__set_light_status(sector.sector_index, LightStatus.RED, environment)
+        return {PassengerDecisionEvent(self.timestamp + datetime.timedelta(seconds= + self.configuration.time_passenger_decision_event), self.configuration)}
 
     @staticmethod
     def __set_light_status(index: int, status: LightStatus, environment: Environment) -> None:
@@ -87,13 +93,13 @@ class ReceiveWeightEvent(Event):
         # For example, if the train is 10 cars long and there are 16 sectors, then the train can be parked
         # between sector index 0 and 6. This is chosen randomly and if we want to specify the same sector each time,
         # then we must do that using the configuration.
-        if environment.train.train_car_length() < self.configuration.station_sector_count:
-            train_length_under_station = self.configuration.station_sector_count - environment.train.train_car_length()
+        if environment.train.train_car_length < self.configuration.station_sector_count:
+            train_length_under_station = self.configuration.station_sector_count - environment.train.train_car_length
             return random_between_range(range(0, train_length_under_station))
 
         # If we for some reason have a train that is longer than the amount of sectors on the station,
         # let us get notified so that all the passengers have the ability to get off.
-        if environment.train.train_car_length() > self.configuration.station_sector_count:
+        if environment.train.train_car_length > self.configuration.station_sector_count:
             raise EnvironmentError("The train is longer than the platform and therefore will not fit.")
 
         # This means that the only option we have left is the possibility of the train being the length of the
