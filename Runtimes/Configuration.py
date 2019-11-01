@@ -111,10 +111,23 @@ class Configuration:
 
     @property
     def station_stair_factor(self) -> float:
+        """
+        Get the factor of how much the distance to the stairs should factor in,
+        when we populate the station with passengers.
+        Returns:
+            The station factor of how much stairs matter in populating stations.
+        """
         return self.__options['station_stair_factor']
 
     @property
     def station_light_thresholds(self) -> Dict[str, float]:
+        """
+        Get the different thresholds that will tell us what light the different
+        lights should be based on the weight of the train car that will stop there.
+        Returns:
+            At dictionary with **green** and **yellow** that holds a float for
+            how much beneath the max weight of the train car that color should be lit.
+        """
         return self.__options['station_light_thresholds']
 
     @property
