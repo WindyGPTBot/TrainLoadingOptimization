@@ -141,7 +141,7 @@ class PassengerDecisionEvent(Event):
             if distance > passenger.max_walk:
                 break
             # Let us loop through all the station sectors at the current distance
-            # and see if we can find the most suitable sector to move the passenger to
+            # and see if we can find a more suitable sector to move the passenger to
             for sector_at_distance in sectors[distance]:
                 # If this is the first sector, then this
                 # will be the first selected sector

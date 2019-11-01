@@ -80,3 +80,14 @@ class PassengerContainer:
             pass
         finally:
             return passengers
+
+    def remove_passenger(self, passenger_to_remove: Passenger) -> None:
+        """
+        Remove a specific passenger from the PassengerContainer
+        Args:
+            passenger_to_remove: The passenger object to remove
+        """
+        for i in range(len(self.passengers)):
+            if passenger_to_remove is self.passengers[i]:
+                self.passengers.pop(i)
+                break

@@ -1,7 +1,7 @@
 from Components.Component import Component
 from Runtimes.Configuration import Configuration
 from Helpers.Ranges import random_between_range
-
+from random import random
 
 class Passenger(Component):
     """
@@ -22,3 +22,6 @@ class Passenger(Component):
     def __str__(self):
         return "Passenger (s: {}, lt: {}, w: {}, sz: {}, mw: {})"\
             .format(self.speed, self.loading_time, self.weight, self.size, self.max_walk)
+
+    def is_compliant(self) -> bool:
+        return random() >= self.configuration.passenger_compliance

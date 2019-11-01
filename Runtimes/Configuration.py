@@ -71,6 +71,15 @@ class Configuration:
         return self.__options['passenger_max_walk_range']
 
     @property
+    def passenger_compliance(self) -> float:
+        """
+        Get the percentage for how compliant the passenger will be.
+        Returns:
+            A float as percentage with 0 for never compliant and 1 for always compliant.
+        """
+        return self.__options['passenger_compliance']
+
+    @property
     def station_sector_count(self) -> int:
         """
         Get the amount of sectors that a station have

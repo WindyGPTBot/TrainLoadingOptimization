@@ -1,6 +1,5 @@
 from numpy.random import randint
 
-
 def random_between_range(rang: range) -> int:
     """
     Get a random between the provided range object
