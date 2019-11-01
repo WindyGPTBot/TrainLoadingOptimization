@@ -1,7 +1,6 @@
 import datetime
 from typing import List
 
-from Events.DepartEvent import DepartEvent
 from Events.Event import Event
 from Runtimes import Configuration
 from Runtimes.Environment import Environment
@@ -19,4 +18,4 @@ class LoadPassengerEvent(Event):
         if not environment.station.is_empty(): #Check if all passengers loaded
             return {}
         else:
-            return {DepartEvent(self.timestamp, self.configuration)}
+            return {}#{WeighTrainEvent(self.timestamp, self.configuration)}
