@@ -3,9 +3,9 @@ from Distributions.NormalDistribution import NormalDistribution
 from Runtimes import ApplicationRuntime
 
 
-class TestPassengerDecisionEvent(unittest.TestCase):
+class TestReceivedWeightEvent(unittest.TestCase):
     """
-    A class to test passenger events.
+    A class to test received weight events.
     """
 
     def setUp(self) -> None:
@@ -30,6 +30,15 @@ class TestPassengerDecisionEvent(unittest.TestCase):
             "station_light_thresholds": {"green": .5, "yellow": .75}
         }
         self.runtime = ApplicationRuntime.ApplicationRunTime(self.options)
+
+    def test_station_lights(self):
+        """
+        Test whether the non-marginal station sectors have light.
+        """
+        self.runtime.run()
+        for sector in self.runtime.environment.station.sectors:
+            if sector.passengers:
+                self.assertIsNone(sector.light)
 
     def tearDown(self) -> None:
         pass
