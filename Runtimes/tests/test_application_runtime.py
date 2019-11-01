@@ -26,7 +26,8 @@ class TestPassengerDecisionEvent(unittest.TestCase):
             "station_stairs_placement": [3],
             "station_sector_passenger_max_count": 25,
             "station_sector_fullness": range(20, 50),
-            "station_stair_factor": 1.5
+            "station_stair_factor": 1.5,
+            "station_light_thresholds": {"green": .5, "yellow": .75}
         }
         self.runtime = ApplicationRuntime.ApplicationRunTime(self.options)
 

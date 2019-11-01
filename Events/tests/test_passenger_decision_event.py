@@ -1,6 +1,6 @@
 import unittest
 from Distributions.NormalDistribution import NormalDistribution
-from Runtimes import Environment, Configuration, ApplicationRuntime
+from Runtimes import ApplicationRuntime
 
 
 class TestPassengerDecisionEvent(unittest.TestCase):
@@ -26,7 +26,8 @@ class TestPassengerDecisionEvent(unittest.TestCase):
             "station_stairs_placement": [3],
             "station_sector_passenger_max_count": 25,
             "station_sector_fullness": range(20, 50),
-            "station_stair_factor": 1.5
+            "station_stair_factor": 1.5,
+            "station_light_thresholds": {"green": .5, "yellow": .75}
         }
         self.runtime = ApplicationRuntime.ApplicationRunTime(self.options)
 
@@ -35,7 +36,7 @@ class TestPassengerDecisionEvent(unittest.TestCase):
         Test whether the non-marginal station sectors have light.
         """
         self.runtime.run()
-
+        print(self.runtime.environment.station)
         for sector in self.runtime.environment.station.sectors:
             # @TODO: When is a sector relevant to check the light? Always? Maybe we should light red in empty locations
             if sector.passengers:
