@@ -34,7 +34,13 @@ if __name__ == '__main__':
         "time_weigh_train_event": 3,
     }
 
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(
+        level=logging.INFO,
+        handlers=[
+            logging.FileHandler("EventLog.log"),
+            logging.StreamHandler()
+        ]
+    )
 
     # Run the application
     application = ApplicationRunTime(options)
