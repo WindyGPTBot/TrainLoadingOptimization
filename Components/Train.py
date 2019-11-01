@@ -24,6 +24,14 @@ class Train(PopulatableComponent):
         self.__train_length = None
         super().__init__(configuration)
 
+    def __str__(self):
+        return 'Train (w: {}, s: {}, p: {}, l: {})'.format(
+            self.weight,
+            self.is_stopped(),
+            self.parked_at,
+            self.train_car_length
+        )
+
     @property
     def parked_at(self) -> int:
         """
@@ -43,6 +51,7 @@ class Train(PopulatableComponent):
         """
         self.__parked_at = sector_index
 
+    @property
     def train_car_length(self) -> int:
         """
         Get the amount of cars this train carries
