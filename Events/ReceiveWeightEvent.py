@@ -3,6 +3,7 @@ from typing import List
 
 from Components.LightStatus import LightStatus
 from Events.Event import Event
+from Events.PassengerDecisionEvent import PassengerDecisionEvent
 from Runtimes.Configuration import Configuration
 from Runtimes.Environment import Environment
 from Helpers.Ranges import random_between_range
@@ -57,6 +58,7 @@ class ReceiveWeightEvent(Event):
                 ReceiveWeightEvent.__set_light_status(sector.sector_index, LightStatus.YELLOW, environment)
             else:
                 ReceiveWeightEvent.__set_light_status(sector.sector_index, LightStatus.RED, environment)
+        return {PassengerDecisionEvent(self.timestamp, self.configuration)}
 
     @staticmethod
     def __set_light_status(index: int, status: LightStatus, environment: Environment) -> None:

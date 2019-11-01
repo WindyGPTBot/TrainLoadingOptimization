@@ -1,6 +1,9 @@
+import datetime
 from typing import List
 
 from Events.Event import Event
+from Events.LoadPassengerEvent import LoadPassengerEvent
+from Runtimes import Configuration
 from Runtimes.Environment import Environment
 from Helpers.Ranges import random_between_percentage
 
@@ -9,6 +12,8 @@ class UnloadTrainEvent(Event):
     """
     Event representing the unloading of passengers
     """
+    def __init__(self, timestamp: datetime, configuration: Configuration):
+        super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment) -> List[Event]:
         # The configuration that tells us the percentage range
@@ -26,3 +31,6 @@ class UnloadTrainEvent(Event):
                 if nr_leaving > 0:
                     train_car.open_door()
                     train_car.remove(int(nr_leaving))
+
+        #TODO: Generate load event for each passenger on station
+        return {LoadPassengerEvent(self.timestamp, self.configuration)}

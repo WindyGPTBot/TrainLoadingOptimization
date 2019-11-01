@@ -1,9 +1,11 @@
+import datetime
 from typing import List
 
 from Components.LightStatus import LightStatus
 from Components.Passenger import Passenger
 from Components.StationSector import StationSector
 from Events.Event import Event
+from Runtimes import Configuration
 from Runtimes.Environment import Environment
 from Helpers.Ranges import random_between_range
 
@@ -15,6 +17,8 @@ class PassengerDecisionEvent(Event):
     be responsible for moving the passengers on the station around
     based on their decisions.
     """
+    def __init__(self, timestamp: datetime, configuration: Configuration):
+        super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment) -> List[Event]:
 
@@ -27,6 +31,7 @@ class PassengerDecisionEvent(Event):
                 self.__handle_yellow_light(sector, environment)
             else:
                 self.__handle_red_light(sector, environment)
+        return {}
 
     def __handle_green_light(self, sector: StationSector, environment: Environment) -> None:
         """
