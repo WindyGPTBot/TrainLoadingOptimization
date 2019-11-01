@@ -1,8 +1,9 @@
-import datetime
+from datetime import datetime
 from typing import List
 
 from Events.Event import Event
 from Events.SendWeightEvent import SendWeightEvent
+from Helpers.DateTime import add_seconds
 from Runtimes.Configuration import Configuration
 from Runtimes.Environment import Environment
 
@@ -25,6 +26,6 @@ class WeighTrainEvent(Event):
                     train_car.weight += passenger.weight
                 environment.train.weight += train_car.weight
         return [
-            SendWeightEvent(self.timestamp + datetime.timedelta(seconds=+ self.configuration.time_send_weight_event),
+            SendWeightEvent(add_seconds(self.timestamp, self.configuration.time_send_weight_event),
                             self.configuration)
         ]

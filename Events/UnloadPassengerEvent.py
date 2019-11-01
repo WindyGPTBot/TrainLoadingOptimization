@@ -1,8 +1,9 @@
-import datetime
+from datetime import datetime
 from typing import List
 
 from Events.Event import Event
 from Events.LoadPassengerEvent import LoadPassengerEvent
+from Helpers.DateTime import add_seconds
 from Helpers.Ranges import random_between_percentage
 from Runtimes import Configuration
 from Runtimes.Environment import Environment
@@ -36,6 +37,6 @@ class UnloadPassengerEvent(Event):
         # TODO: Generate load event for each passenger on station
         return [
             LoadPassengerEvent(
-                self.timestamp + datetime.timedelta(seconds=+ self.configuration.time_load_passenger_event),
+                add_seconds(self.timestamp, self.configuration.time_load_passenger_event),
                 self.configuration)
         ]

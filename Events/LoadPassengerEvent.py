@@ -2,6 +2,8 @@ import datetime
 from typing import List
 
 from Events.Event import Event
+from Events.WeighTrainEvent import WeighTrainEvent
+from Helpers.DateTime import add_seconds
 from Runtimes import Configuration
 from Runtimes.Environment import Environment
 
@@ -17,4 +19,4 @@ class LoadPassengerEvent(Event):
         if not environment.station.is_empty():  # Check if all passengers loaded
             return []
         else:
-            return []  # {WeighTrainEvent(self.timestamp + datetime.timedelta(seconds= + self.configuration.time_weight_train_event), self.configuration)}
+            return [WeighTrainEvent(add_seconds(self.timestamp, 0), self.configuration)]

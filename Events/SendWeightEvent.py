@@ -1,7 +1,6 @@
 import datetime
 from typing import List
 
-from Events.DepartEvent import DepartEvent
 from Events.Event import Event
 from Events.ReceiveWeightEvent import ReceiveWeightEvent
 from Runtimes.Configuration import Configuration
@@ -19,8 +18,6 @@ class SendWeightEvent(Event):
 
     def __fire(self, environment: Environment) -> List[Event]:
         return [
-            DepartEvent(self.timestamp + datetime.timedelta(seconds=+ self.configuration.time_depart_event),
-                        self.configuration),
             ReceiveWeightEvent(
                 self.timestamp + datetime.timedelta(seconds=+ self.configuration.time_receive_weight_event),
                 self.configuration)

@@ -4,6 +4,7 @@ from typing import List
 from Components.LightStatus import LightStatus
 from Events.Event import Event
 from Events.PassengerDecisionEvent import PassengerDecisionEvent
+from Helpers.DateTime import add_seconds
 from Helpers.Ranges import random_between_range
 from Runtimes.Configuration import Configuration
 from Runtimes.Environment import Environment
@@ -63,9 +64,9 @@ class ReceiveWeightEvent(Event):
                 ReceiveWeightEvent.__set_light_status(sector.sector_index, LightStatus.RED, environment)
         return [
             PassengerDecisionEvent(
-                self.timestamp + datetime.timedelta(seconds=+ self.configuration.time_passenger_decision_event),
-                self.configuration)
-        ]
+                add_seconds(self.timestamp, self.configuration.time_passenger_decision_event),
+                self.configuration),
+            ]
 
     @staticmethod
     def __set_light_status(index: int, status: LightStatus, environment: Environment) -> None:

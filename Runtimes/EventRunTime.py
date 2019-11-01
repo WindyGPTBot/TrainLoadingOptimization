@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from Events.WeighTrainEvent import WeighTrainEvent
 from Runtimes.Configuration import Configuration
@@ -26,16 +26,8 @@ class EventRunTime(RunTime):
 
     def run(self) -> None:
         # Enqueue starting event
-        self.event_queue.events.append(WeighTrainEvent(datetime.datetime.now(), self.configuration))
+        self.event_queue.events.append(WeighTrainEvent(datetime.now(), self.configuration))
 
         # Execute events until none are left
         while len(self.event_queue.events) > 0:
             self.event_queue.events.extend(self.event_queue.get_next().run(self.environment))
-
-#        # First we weigh the train at the departing station
-#        departing_loading = WeighTrainEvent(self.configuration)
-#        departing_loading.fire(self.environment)
-#
-#        # Then we receive the weight information at the arriving station
-#        receive_weight_info = ReceiveWeightEvent(self.configuration)
-#        receive_weight_info.fire(self.environment)

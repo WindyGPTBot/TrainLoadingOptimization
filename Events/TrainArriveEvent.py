@@ -1,24 +1,18 @@
-import datetime
 from typing import List
 
 from Events.Event import Event
+from datetime import datetime
+
 from Events.UnloadPassengerEvent import UnloadPassengerEvent
+from Helpers.DateTime import add_seconds
 from Runtimes.Configuration import Configuration
 from Runtimes.Environment import Environment
 
 
-class ArriveEvent(Event):
-    """
-    Event when the train gets weighed.
-    The train is weighed by summing all the passenger weights together
-    """
+class TrainArriveEvent(Event):
 
     def __init__(self, timestamp: datetime, configuration: Configuration):
         super().__init__(timestamp, configuration)
 
     def __fire(self, environment: Environment) -> List[Event]:
-        return [
-            UnloadPassengerEvent(
-                self.timestamp + datetime.timedelta(seconds=self.configuration.time_unload_passenger_event),
-                self.configuration)
-        ]
+        return [UnloadPassengerEvent(add_seconds(self.timestamp, 0), self.configuration)]

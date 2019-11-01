@@ -1,10 +1,13 @@
-import datetime
+from datetime import datetime
 from typing import List, Dict, Union
 
 from Components.LightStatus import LightStatus
 from Components.Passenger import Passenger
 from Components.StationSector import StationSector
 from Events.Event import Event
+from Events.TrainArriveEvent import TrainArriveEvent
+from Events.UnloadPassengerEvent import UnloadPassengerEvent
+from Helpers.DateTime import add_seconds
 from Helpers.Ranges import random_between_range
 from Runtimes import Configuration
 from Runtimes.Environment import Environment
@@ -30,7 +33,7 @@ class PassengerDecisionEvent(Event):
                 self.__handle_yellow_light(sector, environment)
             else:
                 self.__handle_red_light(sector, environment)
-        return []
+        return [TrainArriveEvent(add_seconds(self.timestamp, 0), self.configuration)]
 
     def __handle_green_light(self, sector: StationSector, environment: Environment) -> None:
         """
