@@ -1,3 +1,5 @@
+import logging
+
 from Distributions.NormalDistribution import NormalDistribution
 from Runtimes.ApplicationRuntime import ApplicationRunTime
 
@@ -23,6 +25,8 @@ if __name__ == '__main__':
         "station_stair_factor": 1.5,
         "station_light_thresholds": {"green": .5, "yellow": .75}
     }
+
+    logging.basicConfig(level=logging.INFO)
 
     # Run the application
     application = ApplicationRunTime(options)

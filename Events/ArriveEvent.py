@@ -17,4 +17,5 @@ class ArriveEvent(Event):
         super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment) -> List[Event]:
+        super().log_event()
         return {UnloadTrainEvent(self.timestamp, self.configuration)}

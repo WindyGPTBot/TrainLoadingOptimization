@@ -17,4 +17,5 @@ class DepartEvent(Event):
         super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment) -> List[Event]:
+        super().log_event()
         return {ArriveEvent(self.timestamp + datetime.timedelta(seconds=30), self.configuration)}

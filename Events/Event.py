@@ -4,7 +4,7 @@ from typing import List
 from Runtimes.Environment import Environment
 from Runtimes.Configuration import Configuration
 import datetime
-
+import logging
 
 class Event(ABC):
     """
@@ -24,3 +24,6 @@ class Event(ABC):
             environment: The environment that this event is fired in
         """
         raise NotImplementedError("fire method not implemented in " + self.__class__.__name__)
+
+    def log_event(self):
+        logging.info(str(self.timestamp) + " - Finished event: " + self.__class__.__name__)

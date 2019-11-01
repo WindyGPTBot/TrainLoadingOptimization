@@ -16,6 +16,7 @@ class UnloadTrainEvent(Event):
         super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment) -> List[Event]:
+        super().log_event()
         # The configuration that tells us the percentage range
         # of how much each car should randomly unload at the station.
         unload_range = self.configuration.train_unload_percent

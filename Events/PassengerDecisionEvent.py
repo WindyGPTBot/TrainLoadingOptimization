@@ -21,7 +21,7 @@ class PassengerDecisionEvent(Event):
         super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment) -> List[Event]:
-
+        super().log_event()
         for sector in environment.station.sectors:
             light_status = sector.light.status
             # The passengers stay if they are in a green sector
