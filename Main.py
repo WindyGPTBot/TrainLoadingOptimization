@@ -3,7 +3,6 @@ import logging
 from Distributions.NormalDistribution import NormalDistribution
 from Runtimes.ApplicationRuntime import ApplicationRunTime
 
-
 if __name__ == '__main__':
     options: dict = {
         "passenger_weight_distribution": NormalDistribution(80, 10),

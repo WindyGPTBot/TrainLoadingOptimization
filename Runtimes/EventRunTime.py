@@ -3,8 +3,8 @@ import datetime
 from Events.WeighTrainEvent import WeighTrainEvent
 from Runtimes.Configuration import Configuration
 from Runtimes.Environment import Environment
+from Runtimes.EventQueue import EventQueue
 from Runtimes.RunTime import RunTime
-from Runtimes.EventQueue import  EventQueue
 
 
 class EventRunTime(RunTime):

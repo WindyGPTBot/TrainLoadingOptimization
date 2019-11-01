@@ -1,8 +1,8 @@
 from math import floor
 from typing import List, Tuple
 
-from Components.StationSector import StationSector
 from Components.PopulatableComponent import PopulatableComponent
+from Components.StationSector import StationSector
 from Helpers.Ranges import random_between_percentage
 from Runtimes.Configuration import Configuration
 

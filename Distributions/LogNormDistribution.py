@@ -1,5 +1,7 @@
 from typing import List
+
 from numpy.random import lognormal
+
 from Distributions.Distribution import Distribution
 
 

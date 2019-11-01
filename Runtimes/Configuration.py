@@ -1,4 +1,4 @@
-from typing import Dict, List, Union, Tuple
+from typing import Dict, List, Union
 
 from Distributions.Distribution import Distribution
 
@@ -187,7 +187,6 @@ class Configuration:
     @property
     def time_arrive_event(self) -> float:
         return self.__options['time_arrive_event']
-
 
     @property
     def time_depart_event(self) -> float:

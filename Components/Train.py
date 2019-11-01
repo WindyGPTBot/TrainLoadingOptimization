@@ -1,3 +1,4 @@
+from math import floor
 from typing import List
 
 from Components.PopulatableComponent import PopulatableComponent
@@ -5,7 +6,6 @@ from Components.TrainCar import TrainCar
 from Components.TrainSet import TrainSet
 from Helpers.Ranges import random_between_percentage
 from Runtimes.Configuration import Configuration
-from math import floor, ceil
 
 
 class Train(PopulatableComponent):

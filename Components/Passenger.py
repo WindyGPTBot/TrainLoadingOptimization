@@ -1,7 +1,9 @@
-from Components.Component import Component
-from Runtimes.Configuration import Configuration
-from Helpers.Ranges import random_between_range
 from random import random
+
+from Components.Component import Component
+from Helpers.Ranges import random_between_range
+from Runtimes.Configuration import Configuration
+
 
 class Passenger(Component):
     """

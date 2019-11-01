@@ -1,4 +1,3 @@
-from Components.Component import Component
 from Components.Light import Light
 from Components.PassengerContainer import PassengerContainer
 from Runtimes.Configuration import Configuration

@@ -1,6 +1,3 @@
-from Events import Event
-
-
 class EventQueue():
     """
     Eventqueue, queue of events currently queued up for execution
