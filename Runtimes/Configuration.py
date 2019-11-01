@@ -53,10 +53,6 @@ class Configuration:
         return self.__options['passenger_loading_time_range']
 
     @property
-    def passenger_max_move_on_light(self) -> Tuple[int, int]:
-        return self.__options['passenger_max_move_on_light']
-
-    @property
     def passenger_regular_size(self) -> float:
         """
         Get the regular passenger size
