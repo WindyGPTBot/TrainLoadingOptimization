@@ -23,6 +23,8 @@ class ReceiveWeightEvent(Event):
     def fire(self, environment: Environment) -> None:
         # Compute the total weight by max train car capacity times the passenger mean weight
         max_weight = self.configuration.train_capacity * self.configuration.passenger_mean_weight
+        # Get the light thresholds from the configuration, which we will use
+        # to compute what color the light should be.
         thresholds = self.configuration.station_light_thresholds
         # The yellow threshold is below 75% of the max weight
         yellow_threshold = max_weight * thresholds['yellow']

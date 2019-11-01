@@ -114,7 +114,7 @@ class Configuration:
         return self.__options['station_stair_factor']
 
     @property
-    def station_light_thresholds(self) -> Dict[str, int]:
+    def station_light_thresholds(self) -> Dict[str, float]:
         return self.__options['station_light_thresholds']
 
     @property
