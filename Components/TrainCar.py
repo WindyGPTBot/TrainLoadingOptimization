@@ -70,3 +70,11 @@ class TrainCar(PassengerContainer, Component):
         Close the train car door
         """
         self.__opened = False
+
+    def is_full(self) -> bool:
+        """
+        Get whether the train car is full
+        Returns:
+            True if the train car is full, false if it is not.
+        """
+        return len(self.passengers) == self.configuration.train_capacity
