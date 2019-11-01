@@ -16,10 +16,9 @@ class WeighTrainEvent(Event):
     def __init__(self, timestamp: datetime, configuration: Configuration):
         super().__init__(timestamp, configuration)
 
-    def fire(self, environment: Environment) -> List[Event]:
+    def __fire(self, environment: Environment) -> List[Event]:
         # Adding all the passengers weights together
         # and storing it in the train weight property
-        self.log_event()
         for train_set in environment.train.train_sets:
             for train_car in train_set.cars:
                 for passenger in train_car.passengers:

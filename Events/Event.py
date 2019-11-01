@@ -1,3 +1,4 @@
+from __future__ import annotations
 import logging
 from abc import ABC, abstractmethod
 from datetime import datetime
@@ -17,13 +18,26 @@ class Event(ABC):
         self.timestamp = timestamp
 
     @abstractmethod
-    def fire(self, environment: Environment) -> List[Event]:
+    def __fire(self, environment: Environment) -> List[Event]:
         """
         Fire the event
         Args:
             environment: The environment that this event is fired in
+        Returns:
+            Returns the next events
         """
         raise NotImplementedError("fire method not implemented in " + self.__class__.__name__)
+
+    def run(self, environment: Environment) -> List[Event]:
+        """
+        Run the event with the provided environment
+        Args:
+            environment: The simulation environment
+        Returns:
+            A list with the next events
+        """
+        self.log_event()
+        return self.__fire(environment)
 
     def log_event(self):
         logging.info(str(self.timestamp) + " - Finished event: " + self.__class__.__name__)

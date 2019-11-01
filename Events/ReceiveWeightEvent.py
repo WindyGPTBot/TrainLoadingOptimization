@@ -24,8 +24,7 @@ class ReceiveWeightEvent(Event):
         """
         super().__init__(timestamp, configuration)
 
-    def fire(self, environment: Environment) -> List[Event]:
-        self.log_event()
+    def __fire(self, environment: Environment) -> List[Event]:
         # Compute the total weight by max train car capacity times the passenger mean weight
         max_weight = self.configuration.train_capacity * self.configuration.passenger_mean_weight
         # Get the light thresholds from the configuration, which we will use

@@ -13,8 +13,7 @@ class LoadPassengerEvent(Event):
     def __init__(self, timestamp: datetime, configuration: Configuration):
         super().__init__(timestamp, configuration)
 
-    def fire(self, environment: Environment) -> List[Event]:
-        self.log_event()
+    def __fire(self, environment: Environment) -> List[Event]:
         if not environment.station.is_empty():  # Check if all passengers loaded
             return []
         else:

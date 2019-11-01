@@ -22,15 +22,15 @@ class EventRunTime(RunTime):
         """
         self.environment = environment
         self.configuration = configuration
-        self.eventqueue = EventQueue()
+        self.event_queue = EventQueue()
 
     def run(self) -> None:
-        #Encqueue starting event
-        self.eventqueue.events.append(WeighTrainEvent(datetime.datetime.now(), self.configuration))
+        # Enqueue starting event
+        self.event_queue.events.append(WeighTrainEvent(datetime.datetime.now(), self.configuration))
 
-        #Execute events until none are left
-        while len(self.eventqueue.events) > 0:
-            self.eventqueue.events.extend(self.eventqueue.get_next().fire(self.environment))
+        # Execute events until none are left
+        while len(self.event_queue.events) > 0:
+            self.event_queue.events.extend(self.event_queue.get_next().run(self.environment))
 
 #        # First we weigh the train at the departing station
 #        departing_loading = WeighTrainEvent(self.configuration)
