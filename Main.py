@@ -20,7 +20,8 @@ if __name__ == '__main__':
         "station_stairs_placement": [3],
         "station_sector_passenger_max_count": 25,
         "station_sector_fullness": range(20, 50),
-        "station_stair_factor": 1.5
+        "station_stair_factor": 1.5,
+        "station_light_thresholds": {"green": 50, "yellow": 75}
     }
 
     # Run the application

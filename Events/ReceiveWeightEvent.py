@@ -23,10 +23,11 @@ class ReceiveWeightEvent(Event):
     def fire(self, environment: Environment) -> None:
         # Compute the total weight by max train car capacity times the passenger mean weight
         max_weight = self.configuration.train_capacity * self.configuration.passenger_mean_weight
+        thresholds = self.configuration.station_light_thresholds
         # The yellow threshold is below 75% of the max weight
-        yellow_threshold = max_weight * 0.75
+        yellow_threshold = max_weight * thresholds['yellow']
         # The green threshold is below 50% of the max weight
-        green_threshold = max_weight * 0.5
+        green_threshold = max_weight * thresholds['green']
         # Store the sector index where the train is going to be parked
         environment.train.parked_at = self.__decide_where_to_park(environment)
 
