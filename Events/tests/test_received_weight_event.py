@@ -36,9 +36,12 @@ class TestReceivedWeightEvent(unittest.TestCase):
         Test whether the non-marginal station sectors have light.
         """
         self.runtime.run()
+        train = self.runtime.environment.train
         for sector in self.runtime.environment.station.sectors:
-            if sector.passengers:
-                self.assertIsNone(sector.light)
+            if train.parked_at <= sector.sector_index <= (train.parked_at + train.train_car_length):
+                self.assertIsNotNone(sector.light.status)
+            else:
+                self.assertIsNone(sector.light.status)
 
     def tearDown(self) -> None:
         pass
