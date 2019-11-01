@@ -45,7 +45,7 @@ class ReceiveWeightEvent(Event):
             # Otherwise we will just continue.
             if i < environment.train.parked_at:
                 continue
-            if i > environment.train.parked_at + environment.train.train_car_length():
+            if i > environment.train.parked_at + environment.train.train_car_length:
                 break
 
             # Get the train car at the current sector. We minus by the index where the train is parked,
@@ -93,13 +93,13 @@ class ReceiveWeightEvent(Event):
         # For example, if the train is 10 cars long and there are 16 sectors, then the train can be parked
         # between sector index 0 and 6. This is chosen randomly and if we want to specify the same sector each time,
         # then we must do that using the configuration.
-        if environment.train.train_car_length() < self.configuration.station_sector_count:
-            train_length_under_station = self.configuration.station_sector_count - environment.train.train_car_length()
+        if environment.train.train_car_length < self.configuration.station_sector_count:
+            train_length_under_station = self.configuration.station_sector_count - environment.train.train_car_length
             return random_between_range(range(0, train_length_under_station))
 
         # If we for some reason have a train that is longer than the amount of sectors on the station,
         # let us get notified so that all the passengers have the ability to get off.
-        if environment.train.train_car_length() > self.configuration.station_sector_count:
+        if environment.train.train_car_length > self.configuration.station_sector_count:
             raise EnvironmentError("The train is longer than the platform and therefore will not fit.")
 
         # This means that the only option we have left is the possibility of the train being the length of the
