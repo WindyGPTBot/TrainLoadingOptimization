@@ -25,4 +25,4 @@ class WeighTrainEvent(Event):
                 for passenger in train_car.passengers:
                     train_car.weight += passenger.weight
                 environment.train.weight += train_car.weight
-        return {SendWeightEvent(self.timestamp, self.configuration)}
+        return {SendWeightEvent(self.timestamp + datetime.timedelta(seconds= + self.configuration.time_send_weight_event), self.configuration)}

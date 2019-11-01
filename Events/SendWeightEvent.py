@@ -18,4 +18,5 @@ class SendWeightEvent(Event):
 
     def fire(self, environment: Environment) -> List[Event]:
         super().log_event()
-        return {DepartEvent(self.timestamp, self.configuration), ReceiveWeightEvent(self.timestamp + datetime.timedelta(seconds=2), self.configuration)}
+        return {DepartEvent(self.timestamp + datetime.timedelta(seconds= + self.configuration.time_depart_event), self.configuration),
+                ReceiveWeightEvent(self.timestamp + datetime.timedelta(seconds= + self.configuration.time_receive_weight_event), self.configuration)}

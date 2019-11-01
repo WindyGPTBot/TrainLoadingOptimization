@@ -62,7 +62,7 @@ class ReceiveWeightEvent(Event):
                 ReceiveWeightEvent.__set_light_status(sector.sector_index, LightStatus.YELLOW, environment)
             else:
                 ReceiveWeightEvent.__set_light_status(sector.sector_index, LightStatus.RED, environment)
-        return {PassengerDecisionEvent(self.timestamp, self.configuration)}
+        return {PassengerDecisionEvent(self.timestamp + datetime.timedelta(seconds= + self.configuration.time_passenger_decision_event), self.configuration)}
 
     @staticmethod
     def __set_light_status(index: int, status: LightStatus, environment: Environment) -> None:

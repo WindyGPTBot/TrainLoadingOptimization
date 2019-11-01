@@ -175,6 +175,39 @@ class Configuration:
         """
         return self.__options['train_capacity']
 
+    @property
+    def time_arrive_event(self) -> float:
+        return self.__options['time_arrive_event']
+
+
+    @property
+    def time_depart_event(self) -> float:
+        return self.__options['time_depart_event']
+
+    @property
+    def time_load_passenger_event(self) -> float:
+        return self.__options['time_load_passenger_event']
+
+    @property
+    def time_unload_passenger_event(self) -> float:
+        return self.__options['time_unload_passenger_event']
+
+    @property
+    def time_passenger_decision_event(self) -> float:
+        return self.__options['time_passenger_decision_event']
+
+    @property
+    def time_receive_weight_event(self) -> float:
+        return self.__options['time_receive_weight_event']
+
+    @property
+    def time_send_weight_event(self) -> float:
+        return self.__options['time_send_weight_event']
+
+    @property
+    def time_weigh_train_event(self) -> float:
+        return self.__options['time_weigh_train_event']
+
     def __str__(self):
         """
         Override the string representation to display the dictionary

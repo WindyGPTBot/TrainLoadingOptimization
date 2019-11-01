@@ -23,7 +23,15 @@ if __name__ == '__main__':
         "station_sector_passenger_max_count": 25,
         "station_sector_fullness": range(20, 50),
         "station_stair_factor": 1.5,
-        "station_light_thresholds": {"green": .5, "yellow": .75}
+        "station_light_thresholds": {"green": .5, "yellow": .75},
+        "time_arrive_event": 60,
+        "time_depart_event": 0,
+        "time_load_passenger_event": 1,
+        "time_unload_passenger_event": 1,
+        "time_passenger_decision_event": 5,
+        "time_receive_weight_event": 10,
+        "time_send_weight_event": 0,
+        "time_weigh_train_event": 3,
     }
 
     logging.basicConfig(level=logging.INFO)

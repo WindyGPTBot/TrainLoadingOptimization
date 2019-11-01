@@ -3,7 +3,7 @@ from typing import List
 
 from Events.Event import Event
 from Events.ReceiveWeightEvent import ReceiveWeightEvent
-from Events.UnloadPassengerEvent import UnloadTrainEvent
+from Events.UnloadPassengerEvent import UnloadPassengerEvent
 from Runtimes.Configuration import Configuration
 from Runtimes.Environment import Environment
 
@@ -18,4 +18,4 @@ class ArriveEvent(Event):
 
     def fire(self, environment: Environment) -> List[Event]:
         super().log_event()
-        return {UnloadTrainEvent(self.timestamp, self.configuration)}
+        return {UnloadPassengerEvent(self.timestamp + datetime.timedelta(seconds= + self.configuration.time_unload_passenger_event), self.configuration)}

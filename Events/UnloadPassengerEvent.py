@@ -8,7 +8,7 @@ from Runtimes.Environment import Environment
 from Helpers.Ranges import random_between_percentage
 
 
-class UnloadTrainEvent(Event):
+class UnloadPassengerEvent(Event):
     """
     Event representing the unloading of passengers
     """
@@ -34,4 +34,4 @@ class UnloadTrainEvent(Event):
                     train_car.remove(int(nr_leaving))
 
         #TODO: Generate load event for each passenger on station
-        return {LoadPassengerEvent(self.timestamp, self.configuration)}
+        return {LoadPassengerEvent(self.timestamp + datetime.timedelta(seconds= + self.configuration.time_load_passenger_event), self.configuration)}

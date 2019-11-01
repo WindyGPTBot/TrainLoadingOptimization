@@ -19,4 +19,4 @@ class LoadPassengerEvent(Event):
         if not environment.station.is_empty(): #Check if all passengers loaded
             return {}
         else:
-            return {}#{WeighTrainEvent(self.timestamp, self.configuration)}
+            return {}#{WeighTrainEvent(self.timestamp + datetime.timedelta(seconds= + self.configuration.time_weight_train_event), self.configuration)}
