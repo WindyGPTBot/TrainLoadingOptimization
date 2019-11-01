@@ -18,6 +18,9 @@ class Light(Component):
         super().__init__(configuration)
         self.__status = status
 
+    def __str__(self):
+        return 'Light (s: {})'.format(self.status)
+
     @property
     def status(self) -> LightStatus:
         """

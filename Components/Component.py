@@ -15,6 +15,9 @@ class Component(ABC):
         """
         self.__configuration = configuration
 
+    def __repr__(self):
+        return self.__str__()
+
     @property
     def configuration(self) -> Configuration:
         """

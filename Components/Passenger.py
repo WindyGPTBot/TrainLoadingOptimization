@@ -20,5 +20,5 @@ class Passenger(Component):
         super().__init__(configuration)
 
     def __str__(self):
-        return "Passenger(s: {}, lt: {}, w: {}, sz: {}, mw: {})"\
+        return "Passenger (s: {}, lt: {}, w: {}, sz: {}, mw: {})"\
             .format(self.speed, self.loading_time, self.weight, self.size, self.max_walk)
