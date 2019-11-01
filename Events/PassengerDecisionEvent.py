@@ -1,5 +1,5 @@
 import datetime
-from typing import List
+from typing import List, Dict, Union
 
 from Components.LightStatus import LightStatus
 from Components.Passenger import Passenger
@@ -31,7 +31,7 @@ class PassengerDecisionEvent(Event):
                 self.__handle_yellow_light(sector, environment)
             else:
                 self.__handle_red_light(sector, environment)
-        return {}
+        return []
 
     def __handle_green_light(self, sector: StationSector, environment: Environment) -> None:
         """
