@@ -1,5 +1,9 @@
+import datetime
+from typing import List
+
 from Components.LightStatus import LightStatus
 from Events.Event import Event
+from Events.PassengerDecisionEvent import PassengerDecisionEvent
 from Runtimes.Configuration import Configuration
 from Runtimes.Environment import Environment
 from Helpers.Ranges import random_between_range
@@ -12,15 +16,15 @@ class ReceiveWeightEvent(Event):
     and then lighting the station lights accordingly.
     """
 
-    def __init__(self, configuration: Configuration):
+    def __init__(self, timestamp: datetime, configuration: Configuration):
         """
         Initialize the receive weight event.
         Args:
             configuration: The simulation configuration
         """
-        super().__init__(configuration)
+        super().__init__(timestamp, configuration)
 
-    def fire(self, environment: Environment) -> None:
+    def fire(self, environment: Environment) -> List[Event]:
         # Compute the total weight by max train car capacity times the passenger mean weight
         max_weight = self.configuration.train_capacity * self.configuration.passenger_mean_weight
         # Get the light thresholds from the configuration, which we will use
@@ -57,6 +61,7 @@ class ReceiveWeightEvent(Event):
                 ReceiveWeightEvent.__set_light_status(sector.sector_index, LightStatus.YELLOW, environment)
             else:
                 ReceiveWeightEvent.__set_light_status(sector.sector_index, LightStatus.RED, environment)
+        return {PassengerDecisionEvent(self.timestamp, self.configuration)}
 
     @staticmethod
     def __set_light_status(index: int, status: LightStatus, environment: Environment) -> None:

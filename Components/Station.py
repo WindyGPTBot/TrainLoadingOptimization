@@ -82,3 +82,9 @@ class Station(PopulatableComponent):
         for i in range(configuration.station_sector_count):
             sectors.append(StationSector(configuration, i))
         return sectors
+
+    def is_empty(self) -> bool:
+        for s in self.sectors:
+            if(len(s.passengers) > 0):
+                return False
+        return True
