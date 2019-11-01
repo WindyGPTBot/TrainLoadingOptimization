@@ -8,7 +8,7 @@ class Light(Component):
     Traffic light component placed on the station to signal the passengers.
     """
 
-    def __init__(self, configuration: Configuration, status: LightStatus = LightStatus.RED):
+    def __init__(self, configuration: Configuration, status: LightStatus = None):
         """
         Initialize a new light component
         Args:
