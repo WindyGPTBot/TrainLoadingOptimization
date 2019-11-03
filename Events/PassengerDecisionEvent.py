@@ -32,7 +32,7 @@ class PassengerDecisionEvent(Event):
                 self.__handle_yellow_light(sector, environment)
             else:
                 self.__handle_red_light(sector, environment)
-        return [TrainArriveEvent(add_seconds(self.timestamp, 0), self.configuration)]
+        return []
 
     def __handle_green_light(self, sector: StationSector, environment: Environment) -> None:
         """

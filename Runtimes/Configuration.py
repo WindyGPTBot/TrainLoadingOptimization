@@ -136,6 +136,14 @@ class Configuration:
         return self.__options['station_light_thresholds']
 
     @property
+    def station_distance(self) -> float:
+        """
+        Get the distance in km from the departing station to the arriving station
+        Returns: The distance in km
+        """
+        return self.__options['station_distance']
+
+    @property
     def train_fullness(self) -> range:
         """
         Get a percentage of how full the trains should be. The fullness is represented as a range object,

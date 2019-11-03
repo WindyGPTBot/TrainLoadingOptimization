@@ -14,10 +14,10 @@ def compute_driving_time(
         acceleration: The acceleration in m/s^2
         retardation: The deceleration in m/s^2
     Notes
+        **The function assumes that we can accelerate to cruise speed, cruise and then retard to 0.**
         Equations taken from:
         https://www.dummies.com/education/science/physics/how-to-calculate-time-and-distance-from-acceleration-and-velocity/
         Train data is taken from: https://da.wikipedia.org/wiki/Litra_SE
-        ** The function assumes that we can accelerate to cruise speed, cruise and then retard to 0. **
     Returns:
         The time it takes to travel the distance in seconds
     """

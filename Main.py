@@ -22,6 +22,7 @@ if __name__ == '__main__':
         "train_amount_of_sets": 2,
         "train_park_at_index": None,
         "station_sector_count": 16,
+        "station_distance": 3.0,
         "station_stairs_placement": [3],
         "station_sector_passenger_max_count": 25,
         "station_sector_fullness": range(20, 50),

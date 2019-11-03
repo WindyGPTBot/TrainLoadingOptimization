@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import List, Optional
-
+from Helpers.Acceleration import compute_driving_time
 from Components.Passenger import Passenger
 from Components.StationSector import StationSector
 from Events.Event import Event
