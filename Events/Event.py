@@ -16,11 +16,12 @@ class Event(ABC):
     def __init__(self, timestamp: datetime, configuration: Configuration):
         self.configuration = configuration
         self.timestamp = timestamp
+        self.logger = logging.getLogger(__name__)
 
     @abstractmethod
     def __fire(self, environment: Environment) -> List[Event]:
         """
-        Fire the event
+        Fire the event logic
         Args:
             environment: The environment that this event is fired in
         Returns:

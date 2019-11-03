@@ -9,7 +9,7 @@ from Runtimes import Configuration
 from Runtimes.Environment import Environment
 
 
-class UnloadPassengerEvent(Event):
+class UnloadPassengersEvent(Event):
     """
     Event representing the unloading of passengers
     """
@@ -34,9 +34,15 @@ class UnloadPassengerEvent(Event):
                     train_car.open_door()
                     train_car.remove(int(nr_leaving))
 
-        # TODO: Generate load event for each passenger on station
-        return [
-            LoadPassengerEvent(
-                add_seconds(self.timestamp, self.configuration.time_load_passenger_event),
-                self.configuration)
-        ]
+        # Generate a LoadPassengerEvent for each passenger
+        # waiting on the platform. First we sum the amount
+        # of passengers waiting, and then we generate the list.
+        total_amount_to_load = 0
+        for sector in environment.station.sectors:
+            total_amount_to_load += sector.amount
+        # Instantiate the LoadPassengerEvent objects
+        events = []
+        for i in range(total_amount_to_load):
+            events.append(LoadPassengerEvent(self.timestamp, self.configuration))
+        # Return the events as we should load after unloading
+        return events

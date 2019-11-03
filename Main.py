@@ -1,6 +1,9 @@
+import json
 import logging
+import logging.config
 
 from Distributions.NormalDistribution import NormalDistribution
+# from Runtimes.ApplicationRuntime import ApplicationRunTime
 from Runtimes.ApplicationRuntime import ApplicationRunTime
 
 if __name__ == '__main__':
@@ -34,13 +37,10 @@ if __name__ == '__main__':
         "time_weigh_train_event": 3,
     }
 
-    logging.basicConfig(
-        level=logging.INFO,
-        handlers=[
-            logging.FileHandler("EventLog.log"),
-            logging.StreamHandler()
-        ]
-    )
+    # Create the logger configuration from the json file
+    with open('logging.json', 'rt') as f:
+        config = json.load(f)
+    logging.config.dictConfig(config)
 
     # Run the application
     application = ApplicationRunTime(options)

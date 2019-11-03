@@ -6,7 +6,6 @@ from Components.Passenger import Passenger
 from Components.StationSector import StationSector
 from Events.Event import Event
 from Events.TrainArriveEvent import TrainArriveEvent
-from Events.UnloadPassengerEvent import UnloadPassengerEvent
 from Helpers.DateTime import add_seconds
 from Helpers.Ranges import random_between_range
 from Runtimes import Configuration
@@ -126,8 +125,8 @@ class PassengerDecisionEvent(Event):
     def __choose_sector(self, sectors: Dict[int, List[StationSector]],
                         passenger: Passenger) -> Union[StationSector, None]:
         """
-        The given passenger will choose a sector that he have the time and
-        wants to walk to.
+        The given passenger will choose a sector that
+        he/she have the time and wants to walk to.
         Args:
             sectors: The station sectors that we can move to.
             passenger: The passenger that is taking the decision.
@@ -143,7 +142,7 @@ class PassengerDecisionEvent(Event):
         for distance in sectors.keys():
             # Let us not worry about the stations out of reach
             # for the passenger.
-            # @TODO: This is where the time check should be, so that we
+            # TODO: This is where the time check should be, so that we
             #   only move passengers that have the time to move that distance.
             if distance > passenger.max_walk:
                 break
