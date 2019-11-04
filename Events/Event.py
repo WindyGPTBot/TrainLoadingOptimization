@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import logging
 from abc import ABC, abstractmethod
 from datetime import datetime
@@ -19,7 +20,7 @@ class Event(ABC):
         self.logger = logging.getLogger(__name__)
 
     @abstractmethod
-    def __fire(self, environment: Environment) -> List[Event]:
+    def fire(self, environment: Environment) -> List[Event]:
         """
         Fire the event logic
         Args:
@@ -38,7 +39,7 @@ class Event(ABC):
             A list with the next events
         """
         self.log_event()
-        return self.__fire(environment)
+        return self.fire(environment)
 
     def log_event(self):
         logging.info(str(self.timestamp) + " - Finished event: " + self.__class__.__name__)

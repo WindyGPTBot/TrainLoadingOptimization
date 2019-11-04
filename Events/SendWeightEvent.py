@@ -1,10 +1,10 @@
 from datetime import datetime
 from typing import List
 
-from Helpers.Acceleration import compute_driving_time
 from Events.Event import Event
 from Events.ReceiveWeightEvent import ReceiveWeightEvent
 from Events.TrainArriveEvent import TrainArriveEvent
+from Helpers.Acceleration import compute_driving_time
 from Helpers.DateTime import add_seconds
 from Runtimes.Configuration import Configuration
 from Runtimes.Environment import Environment
@@ -18,7 +18,7 @@ class SendWeightEvent(Event):
     def __init__(self, timestamp: datetime, configuration: Configuration):
         super().__init__(timestamp, configuration)
 
-    def __fire(self, environment: Environment) -> List[Event]:
+    def fire(self, environment: Environment) -> List[Event]:
         return [
             ReceiveWeightEvent(
                 add_seconds(self.timestamp, self.configuration.time_receive_weight_event),

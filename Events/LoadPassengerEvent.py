@@ -1,13 +1,9 @@
 from datetime import datetime
 from typing import List
 
-from Components.StationSector import StationSector
-from Components.TrainCar import TrainCar
 from Events.Event import Event
 from Events.MovePassengerEvent import MovePassengerEvent
 from Events.PrepareTrainEvent import PrepareTrainEvent
-from Events.WeighTrainEvent import WeighTrainEvent
-from Helpers.DateTime import add_seconds
 from Runtimes import Configuration
 from Runtimes.Environment import Environment
 
@@ -20,7 +16,7 @@ class LoadPassengerEvent(Event):
     def __init__(self, timestamp: datetime, configuration: Configuration):
         super().__init__(timestamp, configuration)
 
-    def __fire(self, environment: Environment) -> List[Event]:
+    def fire(self, environment: Environment) -> List[Event]:
 
         for i, sector in enumerate(environment.station.sectors):
             # If the current sector is empty, then we continue

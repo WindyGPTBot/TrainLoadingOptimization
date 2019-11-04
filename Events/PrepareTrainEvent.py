@@ -14,7 +14,7 @@ class PrepareTrainEvent(Event):
     def __init__(self, timestamp: datetime, configuration: Configuration):
         super().__init__(timestamp, configuration)
 
-    def __fire(self, environment: Environment) -> List[Event]:
+    def fire(self, environment: Environment) -> List[Event]:
 
         for train_set in environment.train.train_sets:
             for train_car in train_set.cars:

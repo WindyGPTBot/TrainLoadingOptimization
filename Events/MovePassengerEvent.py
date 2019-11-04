@@ -1,11 +1,8 @@
 from datetime import datetime
 from typing import List, Optional
-from Helpers.Acceleration import compute_driving_time
-from Components.Passenger import Passenger
+
 from Components.StationSector import StationSector
 from Events.Event import Event
-from Events.LoadPassengerEvent import LoadPassengerEvent
-from Runtimes import RunTime
 from Runtimes.Configuration import Configuration
 from Runtimes.Environment import Environment
 
@@ -19,7 +16,7 @@ class MovePassengerEvent(Event):
         super().__init__(timestamp, configuration)
         self.sector = sector
 
-    def __fire(self, environment: Environment) -> List[Event]:
+    def fire(self, environment: Environment) -> List[Event]:
         # Remove the passenger from the sector
         passenger = environment.station.sectors[self.sector.sector_index].remove(1)
         # Get the nearest sector with least people
@@ -32,6 +29,7 @@ class MovePassengerEvent(Event):
         free_sector.add(passenger)
 
         # We return the load event so that passenger can get loaded
+        from Events.LoadPassengerEvent import LoadPassengerEvent
         return [LoadPassengerEvent(self.timestamp, self.configuration)]
 
     def __get_nearby_free_sector(self, environment: Environment) -> Optional[StationSector]:

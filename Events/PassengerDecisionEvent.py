@@ -5,8 +5,6 @@ from Components.LightStatus import LightStatus
 from Components.Passenger import Passenger
 from Components.StationSector import StationSector
 from Events.Event import Event
-from Events.TrainArriveEvent import TrainArriveEvent
-from Helpers.DateTime import add_seconds
 from Helpers.Ranges import random_between_range
 from Runtimes import Configuration
 from Runtimes.Environment import Environment
@@ -22,7 +20,7 @@ class PassengerDecisionEvent(Event):
     def __init__(self, timestamp: datetime, configuration: Configuration):
         super().__init__(timestamp, configuration)
 
-    def __fire(self, environment: Environment) -> List[Event]:
+    def fire(self, environment: Environment) -> List[Event]:
         for sector in environment.station.sectors:
             light_status = sector.light.status
             # The passengers stay if they are in a green sector

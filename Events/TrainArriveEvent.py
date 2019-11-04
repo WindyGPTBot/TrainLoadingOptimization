@@ -1,8 +1,7 @@
+from datetime import datetime
 from typing import List
 
 from Events.Event import Event
-from datetime import datetime
-
 from Events.UnloadPassengersEvent import UnloadPassengersEvent
 from Helpers.DateTime import add_seconds
 from Runtimes.Configuration import Configuration
@@ -22,5 +21,5 @@ class TrainArriveEvent(Event):
         """
         super().__init__(timestamp, configuration)
 
-    def __fire(self, environment: Environment) -> List[Event]:
+    def fire(self, environment: Environment) -> List[Event]:
         return [UnloadPassengersEvent(add_seconds(self.timestamp, 0), self.configuration)]

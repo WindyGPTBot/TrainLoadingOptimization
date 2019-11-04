@@ -1,9 +1,7 @@
 import json
-import logging
 import logging.config
 
 from Distributions.NormalDistribution import NormalDistribution
-# from Runtimes.ApplicationRuntime import ApplicationRunTime
 from Runtimes.ApplicationRuntime import ApplicationRunTime
 
 if __name__ == '__main__':
