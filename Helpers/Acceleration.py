@@ -21,16 +21,23 @@ def compute_driving_time(
     Returns:
         The time it takes to travel the distance in seconds
     """
+    # Convert the given distance from kilometers to meters
     m_travel_distance = travel_distance * 1000
+    # Convert the cruise speed from km/h to m/s
     ms_cruise_speed = cruise_speed / 0.2777
 
+    # First, we must find out how long it takes to accelerate
+    # to cruise speed, and how much distance it requires.
     acceleration_time = (ms_cruise_speed - 0) / acceleration
     acceleration_distance = 0.5 * acceleration * (acceleration_time ** 2)
 
+    # Secondly, we must find out how long it takes to decelerate
+    # from cruise speed to 0, and how much distance it requires.
     retard_time = (ms_cruise_speed - 0) / retardation
     retard_distance = 0.5 * retardation * (retard_time ** 2)
 
+    # Last, we must find out how long it takes to drive the last cruise distance
     cruise_distance = m_travel_distance - (acceleration_distance + retard_distance)
-    cruise_time = cruise_distance * ms_cruise_speed
+    cruise_time = ms_cruise_speed / cruise_distance
 
     return acceleration_time + retard_time + cruise_time
