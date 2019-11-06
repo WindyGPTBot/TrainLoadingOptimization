@@ -12,6 +12,7 @@ class MovePassengerEvent(Event):
     Event responsible for moving a single passenger around the station platform.
     **Assumes that the train is parked.**
     """
+
     def __init__(self, sector: StationSector, timestamp: datetime, configuration: Configuration):
         """
         Initialize a new Move Passenger Event
@@ -52,26 +53,18 @@ class MovePassengerEvent(Event):
             The nearest StationSector with the least people.
             Return None in cases where we could not find a station sector. Should never be the case.
         """
-        current_index = self.sector.sector_index
-        left_index = current_index - 1
-        right_index = current_index + 1
-
         # We loop through the length of the train to find a sector
         for i in range(environment.train.train_car_length):
+            current_index = self.sector.sector_index
+            left_index = current_index - (i + 1)
+            right_index = current_index + (i + 1)
             left_sector = None
             right_sector = None
-            if left_index > 0:
-                try:
-                    environment.get_train_car_at_sector(left_index)
-                    left_sector = environment.station.sectors[left_index]
-                except IndexError:
-                    self.logger.debug("There was no train at left sector {}".format(left_index))
-            if right_index < self.configuration.station_sector_count:
-                try:
-                    environment.get_train_car_at_sector(right_index)
-                    right_sector = environment.station.sectors[right_index]
-                except IndexError:
-                    self.logger.debug("There was no train at right sector {}".format(right_index))
+            if left_index >= 0 and environment.station.sectors[left_index].has_train_car():
+                left_sector = environment.station.sectors[left_index]
+            if right_index < self.configuration.station_sector_count \
+                    and environment.station.sectors[right_index].has_train_car():
+                right_sector = environment.station.sectors[right_index]
 
             # If we could not find a sector to the left and we found one
             # to the right, then we just choose the right
@@ -87,6 +80,3 @@ class MovePassengerEvent(Event):
                     return left_sector
                 else:
                     return right_sector
-        # Good practice is to always return something.
-        # This should never happen, and must be caught.
-        return None

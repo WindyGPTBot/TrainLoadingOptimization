@@ -1,5 +1,6 @@
 from Components.Light import Light
 from Components.PassengerContainer import PassengerContainer
+from Components.TrainCar import TrainCar
 from Runtimes.Configuration import Configuration
 
 
@@ -14,6 +15,7 @@ class StationSector(PassengerContainer):
         """
         self.__index = index
         self.__light = Light(configuration)
+        self.__train_car = None
         super().__init__()
 
     def __str__(self):
@@ -22,6 +24,32 @@ class StationSector(PassengerContainer):
         Returns: Human-readable string
         """
         return 'Station Sector (i: {}, {})'.format(self.sector_index, self.light)
+
+    @property
+    def train_car(self) -> TrainCar:
+        """
+        Get the train car parked at this sector
+        Returns:
+            The train car parked at this sector
+        """
+        return self.__train_car
+
+    @train_car.setter
+    def train_car(self, train_car: TrainCar):
+        """
+        Set the parked train car
+        Args:
+            train_car: The train car parked at this sector
+        """
+        self.__train_car = train_car
+
+    def has_train_car(self) -> bool:
+        """
+        Get whether this station sector has a train car parked
+        Returns:
+            True if train car is parked at this sector, False if it does not.
+        """
+        return self.__train_car is not None
 
     @property
     def light(self) -> Light:

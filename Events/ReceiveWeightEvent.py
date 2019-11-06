@@ -41,6 +41,11 @@ class ReceiveWeightEvent(Event):
         # Store the sector index where the train is going to be parked
         environment.train.parked_at = self.__decide_where_to_park(environment)
 
+        for train_set in environment.train.train_sets:
+            for train_car in train_set.cars:
+                index = environment.train.parked_at + train_set.index + train_car.index
+                environment.station.sectors[index].train_car = train_car
+
         # Now we loop through all the sectors and test the weight threshold of each car
         # and then light each station sector light accordingly.
         for i, sector in enumerate(environment.station.sectors):
