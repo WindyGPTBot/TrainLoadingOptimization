@@ -1,8 +1,8 @@
 from math import floor
 from typing import List, Tuple
 
-from Components.StationSector import StationSector
 from Components.PopulatableComponent import PopulatableComponent
+from Components.StationSector import StationSector
 from Helpers.Ranges import random_between_percentage
 from Runtimes.Configuration import Configuration
 
@@ -84,7 +84,12 @@ class Station(PopulatableComponent):
         return sectors
 
     def is_empty(self) -> bool:
+        """
+        Get whether the station has any passengers in any sector
+        Returns:
+            True if the station is empty, False if there is > 0 passengers in any sector.
+        """
         for s in self.sectors:
-            if(len(s.passengers) > 0):
+            if len(s.passengers) > 0:
                 return False
         return True

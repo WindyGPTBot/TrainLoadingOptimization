@@ -1,7 +1,8 @@
 from typing import List
 
-from Distributions.Distribution import Distribution
 from numpy.random import normal
+
+from Distributions.Distribution import Distribution
 
 
 class NormalDistribution(Distribution):

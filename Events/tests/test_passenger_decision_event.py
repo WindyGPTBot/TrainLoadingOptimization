@@ -1,4 +1,5 @@
 import unittest
+
 from Distributions.NormalDistribution import NormalDistribution
 from Runtimes import ApplicationRuntime
 

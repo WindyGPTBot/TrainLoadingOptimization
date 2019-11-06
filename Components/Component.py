@@ -1,4 +1,5 @@
 from abc import ABC
+from logging import getLogger
 
 from Runtimes.Configuration import Configuration
 
@@ -14,6 +15,7 @@ class Component(ABC):
         Should not be used directly!
         """
         self.__configuration = configuration
+        self.logger = getLogger(self.__class__.__name__)
 
     def __repr__(self):
         return self.__str__()

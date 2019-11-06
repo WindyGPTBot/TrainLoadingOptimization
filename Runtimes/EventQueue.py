@@ -1,9 +1,6 @@
-from Events import Event
-
-
-class EventQueue():
+class EventQueue:
     """
-    Eventqueue, queue of events currently queued up for execution
+    EventQueue, queue of events currently queued up for execution
     """
 
     def __init__(self):

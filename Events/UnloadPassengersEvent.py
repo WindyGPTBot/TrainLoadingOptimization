@@ -1,21 +1,23 @@
-import datetime
+from datetime import datetime
 from typing import List
 
 from Events.Event import Event
 from Events.LoadPassengerEvent import LoadPassengerEvent
+from Helpers.Ranges import random_between_percentage
 from Runtimes import Configuration
 from Runtimes.Environment import Environment
-from Helpers.Ranges import random_between_percentage
 
 
-class UnloadTrainEvent(Event):
+class UnloadPassengersEvent(Event):
     """
     Event representing the unloading of passengers
     """
+
     def __init__(self, timestamp: datetime, configuration: Configuration):
         super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment) -> List[Event]:
+        door_been_opened = False
         # The configuration that tells us the percentage range
         # of how much each car should randomly unload at the station.
         unload_range = self.configuration.train_unload_percent
@@ -30,7 +32,25 @@ class UnloadTrainEvent(Event):
                 # open the doors so that passengers can unload.
                 if nr_leaving > 0:
                     train_car.open_door()
+                    if not door_been_opened:
+                        self.do_action(self.configuration.time_door_action,
+                                       "Opening door for unloading")
+                        door_been_opened = True
                     train_car.remove(int(nr_leaving))
+                    self.logger.info(
+                        "Removing {} passengers from train car {} in train set {}".format(
+                            int(nr_leaving), train_car.index, train_set.index)
+                    )
 
-        #TODO: Generate load event for each passenger on station
-        return {LoadPassengerEvent(self.timestamp, self.configuration)}
+        # Generate a LoadPassengerEvent for each passenger
+        # waiting on the platform. First we sum the amount
+        # of passengers waiting, and then we generate the list.
+        total_amount_to_load = 0
+        for sector in environment.station.sectors:
+            total_amount_to_load += sector.amount
+        # Instantiate the LoadPassengerEvent objects
+        events = []
+        for i in range(total_amount_to_load):
+            events.append(LoadPassengerEvent(self.timestamp, self.configuration))
+        # Return the events as we should load after unloading
+        return events

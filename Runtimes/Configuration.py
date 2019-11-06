@@ -1,4 +1,4 @@
-from typing import Dict, List, Union, Tuple
+from typing import Dict, List, Union
 
 from Distributions.Distribution import Distribution
 
@@ -71,6 +71,15 @@ class Configuration:
         return self.__options['passenger_max_walk_range']
 
     @property
+    def passenger_compliance(self) -> float:
+        """
+        Get the percentage for how compliant the passenger will be.
+        Returns:
+            A float as percentage with 0 for never compliant and 1 for always compliant.
+        """
+        return self.__options['passenger_compliance']
+
+    @property
     def station_sector_count(self) -> int:
         """
         Get the amount of sectors that a station have
@@ -127,6 +136,14 @@ class Configuration:
         return self.__options['station_light_thresholds']
 
     @property
+    def station_distance(self) -> float:
+        """
+        Get the distance in km from the departing station to the arriving station
+        Returns: The distance in km
+        """
+        return self.__options['station_distance']
+
+    @property
     def train_fullness(self) -> range:
         """
         Get a percentage of how full the trains should be. The fullness is represented as a range object,
@@ -174,6 +191,46 @@ class Configuration:
         Returns: The max train car capacity
         """
         return self.__options['train_capacity']
+
+    @property
+    def time_arrive_event(self) -> float:
+        return self.__options['time_arrive_event']
+
+    @property
+    def time_depart_event(self) -> float:
+        return self.__options['time_depart_event']
+
+    @property
+    def time_load_passenger_event(self) -> float:
+        return self.__options['time_load_passenger_event']
+
+    @property
+    def time_unload_passenger_event(self) -> float:
+        return self.__options['time_unload_passenger_event']
+
+    @property
+    def time_passenger_decision_event(self) -> float:
+        return self.__options['time_passenger_decision_event']
+
+    @property
+    def time_receive_weight_event(self) -> float:
+        return self.__options['time_receive_weight_event']
+
+    @property
+    def time_send_weight_event(self) -> float:
+        return self.__options['time_send_weight_event']
+
+    @property
+    def time_weigh_train_event(self) -> float:
+        return self.__options['time_weigh_train_event']
+
+    @property
+    def time_door_action(self):
+        """
+        Get the amount of time it takes to open a door
+        Returns: The time in seconds
+        """
+        return self.__options['time_door_action']
 
     def __str__(self):
         """
