@@ -224,6 +224,14 @@ class Configuration:
     def time_weigh_train_event(self) -> float:
         return self.__options['time_weigh_train_event']
 
+    @property
+    def time_door_action(self):
+        """
+        Get the amount of time it takes to open a door
+        Returns: The time in seconds
+        """
+        return self.__options['time_door_action']
+
     def __str__(self):
         """
         Override the string representation to display the dictionary

@@ -22,4 +22,5 @@ class TrainArriveEvent(Event):
         super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment) -> List[Event]:
+        environment.timings.start_timer(self.timestamp)
         return [UnloadPassengersEvent(add_seconds(self.timestamp, 0), self.configuration)]

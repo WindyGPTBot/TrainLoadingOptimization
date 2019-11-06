@@ -8,7 +8,7 @@ if __name__ == '__main__':
     options: dict = {
         "passenger_weight_distribution": NormalDistribution(80, 10),
         "passenger_mean_weight": 80,
-        "passenger_speed_range": range(1, 3),
+        "passenger_speed_range": range(5, 10),
         "passenger_loading_time_range": range(1, 3),
         "passenger_regular_size": 0.5,
         "passenger_max_walk_range": range(0, 6),
@@ -34,13 +34,13 @@ if __name__ == '__main__':
         "time_receive_weight_event": 10,
         "time_send_weight_event": 0,
         "time_weigh_train_event": 3,
+        "time_door_action": 4
     }
 
     # Create the logger configuration from the json file
     with open('logging.json', 'rt') as f:
         config = json.load(f)
     logging.config.dictConfig(config)
-
     # Run the application
     application = ApplicationRunTime(options)
     application.run()

@@ -17,6 +17,7 @@ class UnloadPassengersEvent(Event):
         super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment) -> List[Event]:
+        door_been_opened = False
         # The configuration that tells us the percentage range
         # of how much each car should randomly unload at the station.
         unload_range = self.configuration.train_unload_percent
@@ -31,7 +32,15 @@ class UnloadPassengersEvent(Event):
                 # open the doors so that passengers can unload.
                 if nr_leaving > 0:
                     train_car.open_door()
+                    if not door_been_opened:
+                        self.do_action(self.configuration.time_door_action,
+                                       "Opening door for unloading")
+                        door_been_opened = True
                     train_car.remove(int(nr_leaving))
+                    self.logger.info(
+                        "Removing {} passengers from train car {} in train set {}".format(
+                            int(nr_leaving), train_car.index, train_set.index)
+                    )
 
         # Generate a LoadPassengerEvent for each passenger
         # waiting on the platform. First we sum the amount

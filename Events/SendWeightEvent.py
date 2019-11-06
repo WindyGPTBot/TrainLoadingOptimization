@@ -19,13 +19,15 @@ class SendWeightEvent(Event):
         super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment) -> List[Event]:
+        train_arrive_time = add_seconds(self.timestamp, compute_driving_time(self.configuration.station_distance))
         return [
             ReceiveWeightEvent(
                 add_seconds(self.timestamp, self.configuration.time_receive_weight_event),
+                train_arrive_time,
                 self.configuration
             ),
             TrainArriveEvent(
-                add_seconds(self.timestamp, compute_driving_time(self.configuration.station_distance)),
+                train_arrive_time,
                 self.configuration
             )
         ]

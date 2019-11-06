@@ -10,26 +10,36 @@ from Runtimes.Environment import Environment
 class MovePassengerEvent(Event):
     """
     Event responsible for moving a single passenger around the station platform.
-    **Should only be used when the train is parked.**
+    **Assumes that the train is parked.**
     """
     def __init__(self, sector: StationSector, timestamp: datetime, configuration: Configuration):
+        """
+        Initialize a new Move Passenger Event
+        Args:
+            sector: The sector the passenger is moving from
+            timestamp: The event timestamp
+            configuration: The simulation configuration
+        """
         super().__init__(timestamp, configuration)
         self.sector = sector
 
     def fire(self, environment: Environment) -> List[Event]:
         # Remove the passenger from the sector
-        passenger = environment.station.sectors[self.sector.sector_index].remove(1)
+        from_sector = environment.station.sectors[self.sector.sector_index]
+        passenger = from_sector.remove(1)
         # Get the nearest sector with least people
         free_sector = self.__get_nearby_free_sector(environment)
-
+        # Security catch to prevent None reference
         if free_sector is None:
             raise RuntimeError("We could not find a free sector for the passenger. Should never have happened.")
-
         # Add the passenger to the free sector
         free_sector.add(passenger)
 
+        self.logger.info(
+            "Moved passenger from sector {} to sector {}".format(from_sector.sector_index, free_sector.sector_index)
+        )
         # We return the load event so that passenger can get loaded
-        from Events.LoadPassengerEvent import LoadPassengerEvent
+        from Events.LoadPassengerEvent import LoadPassengerEvent  # Inline/local import to prevent reference error
         return [LoadPassengerEvent(self.timestamp, self.configuration)]
 
     def __get_nearby_free_sector(self, environment: Environment) -> Optional[StationSector]:

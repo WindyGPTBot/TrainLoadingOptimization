@@ -17,12 +17,15 @@ class ReceiveWeightEvent(Event):
     and then lighting the station lights accordingly.
     """
 
-    def __init__(self, timestamp: datetime, configuration: Configuration):
+    def __init__(self, timestamp: datetime, train_arrive: datetime, configuration: Configuration):
         """
         Initialize the receive weight event.
         Args:
+            timestamp: The timestamp for this event
+            train_arrive: The timestamp for when the train arrives
             configuration: The simulation configuration
         """
+        self.train_arrive_time = train_arrive
         super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment) -> List[Event]:
@@ -64,9 +67,10 @@ class ReceiveWeightEvent(Event):
                 ReceiveWeightEvent.__set_light_status(sector.sector_index, LightStatus.RED, environment)
         return [
             PassengerDecisionEvent(
-                add_seconds(self.timestamp, self.configuration.time_passenger_decision_event),
-                self.configuration),
-            ]
+                add_seconds(self.timestamp, 0),
+                self.train_arrive_time,
+                self.configuration
+            )]
 
     @staticmethod
     def __set_light_status(index: int, status: LightStatus, environment: Environment) -> None:

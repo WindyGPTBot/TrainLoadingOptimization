@@ -24,22 +24,23 @@ class LoadPassengerEvent(Event):
             if sector.amount == 0:
                 continue
 
-            # If this is an sector where there is no train parked,
+            # If this is a sector where there is no train parked,
             # but there are waiting passengers then we must move
             # those passengers to a sector where a train is parked.
-            if environment.train.parked_at >= sector.sector_index < environment.train.train_car_length:
+            if environment.train.parked_at < sector.sector_index >= environment.train.train_car_length:
                 return [MovePassengerEvent(sector, self.timestamp, self.configuration)]
-
             # Get the train car parked at the current sector
             train_car = environment.train[environment.train.parked_at + i]
-
-            # Load the passenger
+            # Unload the passenger
             passengers = environment.station.sectors[sector.sector_index].remove(1)
             # Security check so that we do not accidentally get an IndexError
             if len(passengers) == 0:
+                self.logger.warning("Unloaded zero passengers from section {}".format(sector.sector_index))
                 break
             # Add the passenger to the sector
             train_car.add(passengers[0])
+            # Add the time it takes to load this passenger
+            self.do_action(passengers[0].loading_time, "Loading passenger into car {}".format(train_car.index))
             # The event is only responsible for a single
             # passenger, so we stop the loading in this
             # event once the passenger has been added to

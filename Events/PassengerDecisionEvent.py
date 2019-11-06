@@ -17,7 +17,7 @@ class PassengerDecisionEvent(Event):
     be responsible for moving the passengers on the station around
     based on their decisions.
     """
-    def __init__(self, timestamp: datetime, configuration: Configuration):
+    def __init__(self, timestamp: datetime, train_arrives: datetime, configuration: Configuration):
         super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment) -> List[Event]:

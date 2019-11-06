@@ -1,4 +1,5 @@
 from datetime import datetime
+from logging import getLogger
 
 from Events.WeighTrainEvent import WeighTrainEvent
 from Runtimes.Configuration import Configuration
@@ -23,6 +24,7 @@ class EventRunTime(RunTime):
         self.environment = environment
         self.configuration = configuration
         self.event_queue = EventQueue()
+        self.logger = getLogger(self.__class__.__name__)
 
     def run(self) -> None:
         # Enqueue starting event
@@ -30,4 +32,7 @@ class EventRunTime(RunTime):
 
         # Execute events until none are left
         while len(self.event_queue.events) > 0:
-            self.event_queue.events.extend(self.event_queue.get_next().run(self.environment))
+            try:
+                self.event_queue.events.extend(self.event_queue.get_next().run(self.environment))
+            except RuntimeError as e:
+                self.logger.warning(e)
