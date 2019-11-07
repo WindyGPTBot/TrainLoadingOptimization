@@ -30,7 +30,7 @@ class Station(PopulatableComponent):
         """
         # First, we get a list with integers that represent which sectors that have stairs
         stair_placement = self.configuration.station_stairs_placement
-
+        total_waiting = 0
         for sector in self.sectors:
             # First we get the distances to all the stairs
             distances = self.__calculate_distances(sector.sector_index, stair_placement)
@@ -48,6 +48,9 @@ class Station(PopulatableComponent):
                 amount = 0
             # Add the amount to the sector
             sector.add(amount, self.configuration)
+            total_waiting += amount
+            self.logger.info("There are {} passengers waiting in sector {}".format(amount, sector.sector_index))
+        self.logger.info("There in total {} passengers waiting on the station".format(total_waiting))
 
     @property
     def sectors(self) -> List[StationSector]:

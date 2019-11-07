@@ -42,15 +42,4 @@ class UnloadPassengersEvent(Event):
                             int(nr_leaving), train_car.index, train_set.index)
                     )
 
-        # Generate a LoadPassengerEvent for each passenger
-        # waiting on the platform. First we sum the amount
-        # of passengers waiting, and then we generate the list.
-        total_amount_to_load = 0
-        for sector in environment.station.sectors:
-            total_amount_to_load += sector.amount
-        # Instantiate the LoadPassengerEvent objects
-        events = []
-        for i in range(total_amount_to_load):
-            events.append(LoadPassengerEvent(self.timestamp, self.configuration))
-        # Return the events as we should load after unloading
-        return events
+        return [LoadPassengerEvent(self.timestamp, self.configuration)]

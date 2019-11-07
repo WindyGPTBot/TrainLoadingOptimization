@@ -36,3 +36,5 @@ class EventRunTime(RunTime):
                 self.event_queue.events.extend(self.event_queue.get_next().run(self.environment))
             except RuntimeError as e:
                 self.logger.warning(e)
+
+        self.logger.info("Concluded with a duration of {} seconds".format(self.environment.timings.turn_around_time))

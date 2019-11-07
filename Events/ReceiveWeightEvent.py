@@ -41,15 +41,17 @@ class ReceiveWeightEvent(Event):
         # Store the sector index where the train is going to be parked
         environment.train.parked_at = self.__decide_where_to_park(environment)
 
+        for i in range(environment.train.train_car_length):
+            index = environment.train.parked_at + i
+            environment.station.sectors[index].train_car = environment.train[i]
+
         # Now we loop through all the sectors and test the weight threshold of each car
         # and then light each station sector light accordingly.
         for i, sector in enumerate(environment.station.sectors):
             # We are only interested in the station sectors where there is a door.
             # Otherwise we will just continue.
-            if i < environment.train.parked_at:
+            if not sector.has_train_car():
                 continue
-            if i > environment.train.parked_at + environment.train.train_car_length:
-                break
 
             # Get the train car at the current sector. We minus by the index where the train is parked,
             # because if the train is parked at index 3, then the i=3 and therefore get train car number 3.
@@ -60,10 +62,13 @@ class ReceiveWeightEvent(Event):
 
             # Light the sector lights accordingly.
             if weight <= green_threshold:
+                self.logger.info("Setting sector {} to green".format(sector.sector_index))
                 ReceiveWeightEvent.__set_light_status(sector.sector_index, LightStatus.GREEN, environment)
             elif weight <= yellow_threshold:
+                self.logger.info("Setting sector {} to yellow".format(sector.sector_index))
                 ReceiveWeightEvent.__set_light_status(sector.sector_index, LightStatus.YELLOW, environment)
             else:
+                self.logger.info("Setting sector {} to red".format(sector.sector_index))
                 ReceiveWeightEvent.__set_light_status(sector.sector_index, LightStatus.RED, environment)
         return [
             PassengerDecisionEvent(
