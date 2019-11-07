@@ -19,6 +19,7 @@ class PassengerDecisionEvent(Event):
     """
     def __init__(self, timestamp: datetime, train_arrives: datetime, configuration: Configuration):
         super().__init__(timestamp, configuration)
+        self.train_arrives = train_arrives
 
     def fire(self, environment: Environment) -> List[Event]:
         for sector in environment.station.sectors:
@@ -76,12 +77,12 @@ class PassengerDecisionEvent(Event):
         # If the sector to the left has fewer passengers than the
         # current sector and fewer than the sector to the right,
         # then we move some passengers to the left sector.
-        if current_amount > left_amount < right_amount:
+        if current_amount > left_amount <= right_amount:
             PassengerDecisionEvent.__move_passengers(current_index, left_index, environment)
 
         # Otherwise, if the right has the least amount then
         # we move passengers to the right sector instead
-        elif current_amount > right_amount < left_amount:
+        elif current_amount > right_amount <= left_amount:
             PassengerDecisionEvent.__move_passengers(current_index, right_index, environment)
 
     def __handle_red_light(self, sector: StationSector, environment: Environment) -> None:

@@ -27,7 +27,7 @@ class PrepareTrainEvent(Event):
                     # and if they have then we just continue, otherwise
                     # we add 4 seconds of time taken.
                     if not has_been_opened:
-                        self.do_action(4, "Closing the doors in train car {}".format(train_car.index))
+                        self.do_action(self.configuration.time_door_action, "Closing the doors")
                         has_been_opened = True
         # Stop the timer once this event has concluded,
         # as we do not care about weighing the train again

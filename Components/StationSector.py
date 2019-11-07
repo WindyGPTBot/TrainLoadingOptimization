@@ -1,10 +1,13 @@
+from typing import Optional
+
+from Components.Component import Component
 from Components.Light import Light
 from Components.PassengerContainer import PassengerContainer
 from Components.TrainCar import TrainCar
 from Runtimes.Configuration import Configuration
 
 
-class StationSector(PassengerContainer):
+class StationSector(PassengerContainer, Component):
     """
     Class representing a single station sector which can contain passengers
     """
@@ -15,8 +18,9 @@ class StationSector(PassengerContainer):
         """
         self.__index = index
         self.__light = Light(configuration)
-        self.__train_car = None
-        super().__init__()
+        self.__train_car: Optional[TrainCar] = None
+        PassengerContainer.__init__(self)
+        Component.__init__(self, configuration)
 
     def __str__(self):
         """

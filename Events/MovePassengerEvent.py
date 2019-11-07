@@ -26,8 +26,7 @@ class MovePassengerEvent(Event):
 
     def fire(self, environment: Environment) -> List[Event]:
         # Remove the passenger from the sector
-        from_sector = environment.station.sectors[self.sector.sector_index]
-        passenger = from_sector.remove(1)
+        passenger = self.sector.remove(1)
         # Get the nearest sector with least people
         free_sector = self.__get_nearby_free_sector(environment)
         # Security catch to prevent None reference
@@ -37,7 +36,7 @@ class MovePassengerEvent(Event):
         free_sector.add(passenger)
 
         self.logger.info(
-            "Moved passenger from sector {} to sector {}".format(from_sector.sector_index, free_sector.sector_index)
+            "Moved passenger from sector {} to sector {}".format(self.sector.sector_index, free_sector.sector_index)
         )
         # We return the load event so that passenger can get loaded
         from Events.LoadPassengerEvent import LoadPassengerEvent  # Inline/local import to prevent reference error
@@ -53,13 +52,16 @@ class MovePassengerEvent(Event):
             The nearest StationSector with the least people.
             Return None in cases where we could not find a station sector. Should never be the case.
         """
+        current_index = self.sector.sector_index
+
         # We loop through the length of the train to find a sector
         for i in range(environment.train.train_car_length):
-            current_index = self.sector.sector_index
             left_index = current_index - (i + 1)
             right_index = current_index + (i + 1)
+
             left_sector = None
             right_sector = None
+
             if left_index >= 0 and environment.station.sectors[left_index].has_train_car():
                 left_sector = environment.station.sectors[left_index]
             if right_index < self.configuration.station_sector_count \

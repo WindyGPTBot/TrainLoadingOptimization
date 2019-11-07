@@ -8,7 +8,7 @@ class TrainCar(PassengerContainer, Component):
     Represents a single train car in a train set
     """
 
-    def __init__(self, index: int, configuration: Configuration):
+    def __init__(self, index: int, configuration: Configuration, train_set):
         """
         Initialize a new train car component
         Args:
@@ -19,6 +19,16 @@ class TrainCar(PassengerContainer, Component):
         self.__weight = 0
         self.__opened = False
         self.__index = index
+        self.__train_set = train_set
+
+    @property
+    def train_set(self):
+        """
+        Get the train that the car is in
+        Returns:
+            The train set
+        """
+        return self.__train_set
 
     @property
     def index(self) -> int:

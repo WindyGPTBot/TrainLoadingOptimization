@@ -1,7 +1,7 @@
 from typing import List
 
-from Components.TrainCar import TrainCar
 from Runtimes.Configuration import Configuration
+from Components.TrainCar import TrainCar
 
 
 class TrainSet:
@@ -35,8 +35,7 @@ class TrainSet:
         """
         return self.__cars
 
-    @staticmethod
-    def __spawn_cars(configuration: Configuration) -> List[TrainCar]:
+    def __spawn_cars(self, configuration: Configuration) -> List[TrainCar]:
         """
         Private static helper method that will spawn the cars for this train set based on the provided configuration
         Args:
@@ -46,5 +45,5 @@ class TrainSet:
         """
         cars = []
         for i in range(configuration.train_set_setup):
-            cars.append(TrainCar(i, configuration))
+            cars.append(TrainCar(i, configuration, self))
         return cars

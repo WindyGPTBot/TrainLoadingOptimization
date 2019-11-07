@@ -30,6 +30,12 @@ class LoadPassengerEvent(Event):
             if not sector.has_train_car():
                 self.logger.info("No train at sector {}. Moving passenger instead.".format(sector.sector_index))
                 return [MovePassengerEvent(sector, self.timestamp, self.configuration)]
+            # Or we also want to move passengers wanting
+            # to board the train but the train car is full.
+            elif sector.train_car.is_full():
+                self.logger.info("Train in sector {} is full. Moving passenger instead.".format(sector.sector_index))
+                return [MovePassengerEvent(sector, self.timestamp, self.configuration)]
+
             # Get the train car parked at the current sector
             train_car = sector.train_car
             # Unload the passenger
@@ -41,7 +47,10 @@ class LoadPassengerEvent(Event):
             # Add the passenger to the sector
             train_car.add(passengers[0])
             # Add the time it takes to load this passenger
-            self.do_action(passengers[0].loading_time, "Loading passenger into car {}".format(train_car.index))
+            self.do_action(
+                passengers[0].loading_time,
+                "Loading passenger into car {} in set {}".format(train_car.index, train_car.train_set.index)
+            )
             # The event is only responsible for a single
             # passenger, so we stop the loading in this
             # event once the passenger has been added to
@@ -49,9 +58,9 @@ class LoadPassengerEvent(Event):
             break
 
         # If the station is empty, we can start the departure.
-        # Otherwise, there must be other loading events
-        # waiting and we therefore just return an empty list.
+        # Otherwise, there must be other passengers waiting
+        # so we return another LoadPassengerEvent.
         if environment.station.is_empty():
             return [PrepareTrainEvent(self.timestamp, self.configuration)]
         else:
-            return []
+            return [LoadPassengerEvent(self.timestamp, self.configuration)]
