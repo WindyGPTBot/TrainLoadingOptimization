@@ -47,7 +47,6 @@ class TestReceivedWeightEvent(unittest.TestCase):
         Test whether the non-marginal station sectors have light.
         """
         self.runtime.run()
-        train = self.runtime.environment.train
         for sector in self.runtime.environment.station.sectors:
             if sector.train_car:
                 self.assertIsNotNone(sector.light.status)
