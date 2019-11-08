@@ -108,7 +108,7 @@ class ReceiveWeightEvent(Event):
         # then we must do that using the configuration.
         if environment.train.train_car_length < self.configuration.station_sector_count:
             train_length_under_station = self.configuration.station_sector_count - environment.train.train_car_length
-            return random_between_range(range(0, train_length_under_station))
+            return random_between_range(self.configuration.environment_random_seed, range(0, train_length_under_station))
 
         # If we for some reason have a train that is longer than the amount of sectors on the station,
         # let us get notified so that all the passengers have the ability to get off.

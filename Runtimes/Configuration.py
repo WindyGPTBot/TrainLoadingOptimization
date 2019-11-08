@@ -1,5 +1,4 @@
 from typing import Dict, List, Union
-
 from Distributions.Distribution import Distribution
 
 
@@ -231,6 +230,14 @@ class Configuration:
         Returns: The time in seconds
         """
         return self.__options['time_door_action']
+
+    @property
+    def environment_random_seed(self):
+        """
+        Get the amount of time it takes to open a door
+        Returns: The time in seconds
+        """
+        return self.__options['environment_random_seed']
 
     def __str__(self):
         """
