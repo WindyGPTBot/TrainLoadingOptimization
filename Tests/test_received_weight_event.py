@@ -49,9 +49,11 @@ class TestReceivedWeightEvent(unittest.TestCase):
         self.runtime.run()
         train = self.runtime.environment.train
         for sector in self.runtime.environment.station.sectors:
+            # In this section, a car is stopped and the light should be on
             if train.parked_at <= sector.sector_index <= (train.parked_at + train.train_car_length):
                 self.assertIsNotNone(sector.light.status)
             else:
+                # Here the light should be off. No parked car.
                 self.assertIsNone(sector.light.status)
 
     def tearDown(self) -> None:
