@@ -2,6 +2,9 @@ import unittest
 
 from Distributions.NormalDistribution import NormalDistribution
 from Runtimes import ApplicationRuntime
+from Events.PassengerDecisionEvent import PassengerDecisionEvent
+from Helpers import DateTime
+from datetime import datetime
 
 
 class TestPassengerDecisionEvent(unittest.TestCase):
@@ -42,6 +45,28 @@ class TestPassengerDecisionEvent(unittest.TestCase):
             "time_door_action": 4
         }
         self.runtime = ApplicationRuntime.ApplicationRunTime(self.options)
+
+    def test_passenger_move_upon_red_light(self):
+        self.options['train_capacity'] = 70
+        env = self.runtime.environment
+        conf = self.runtime.environment.configuration
+        station = self.runtime.environment.station
+        car = self.runtime.environment.train.train_sets[0].cars[0]
+        car.add(passengers=70 - car.amount, configuration=conf)
+        print(station.sectors[0].has_train_car())
+
+        # We make this car full
+        print('', )
+
+        now = datetime.now()
+        p_event_1 = PassengerDecisionEvent(
+            now,
+            DateTime.add_seconds(now, 0),
+            self.runtime.configuration
+        )
+
+
+
 
     def tearDown(self) -> None:
         pass

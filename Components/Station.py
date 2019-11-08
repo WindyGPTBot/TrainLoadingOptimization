@@ -42,7 +42,13 @@ class Station(PopulatableComponent):
             # The stair factor which defines the importance of the stair
             stair_factor = self.configuration.station_stair_factor
             # Calculate the amount of people in this sector based on the parameters above
-            amount = floor(random_between_percentage(rang, cap) - ld_distance * stair_factor)
+            amount = floor(
+                random_between_percentage(
+                    self.configuration.environment_random_seed,
+                    rang,
+                    cap
+                ) - ld_distance * stair_factor
+            )
             # Sometimes we end up with a amount < 0, let us just set it to zero then
             if amount < 0:
                 amount = 0
