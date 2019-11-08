@@ -10,7 +10,7 @@ class TestPassengerDecisionEvent(unittest.TestCase):
     """
 
     def setUp(self) -> None:
-        options: dict = {
+        self.options: dict = {
             "passenger_weight_distribution": NormalDistribution(80, 10),
             "passenger_mean_weight": 80,
             "passenger_speed_range": range(5, 10),
