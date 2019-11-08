@@ -49,10 +49,22 @@ class TestReceivedWeightEvent(unittest.TestCase):
         self.runtime.run()
         train = self.runtime.environment.train
         for sector in self.runtime.environment.station.sectors:
-            if train.parked_at <= sector.sector_index <= (train.parked_at + train.train_car_length):
+            if sector.train_car:
                 self.assertIsNotNone(sector.light.status)
             else:
                 self.assertIsNone(sector.light.status)
+
+    def test_station_has_passengers(self):
+        """
+        Test whether the station has passengers on it.
+        """
+        self.options['station_sector_passenger_max_count'] = 100
+        self.options['station_sector_fullness'] = range(10, 10)
+        self.runtime.run()
+
+        # for loop for sectors, check passengers
+        for sector in self.runtime.environment.station.sectors:
+            print("amount: ", sector.amount)
 
     def tearDown(self) -> None:
         pass
