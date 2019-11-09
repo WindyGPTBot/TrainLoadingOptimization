@@ -26,7 +26,11 @@ class UnloadPassengersEvent(Event):
                 # We first randomly choose using the configuration
                 # how many passengers should leave this car
                 passenger_count = len(train_car.passengers)
-                nr_leaving = random_between_percentage(unload_range, passenger_count)
+                nr_leaving = random_between_percentage(
+                    self.configuration.environment_random_seed,
+                    unload_range,
+                    passenger_count
+                )
 
                 # If there are any passengers leaving we must also
                 # open the doors so that passengers can unload.

@@ -74,16 +74,22 @@ class PassengerDecisionEvent(Event):
             if right_sector.light.status == LightStatus.GREEN:
                 right_amount = right_sector.amount
 
+        # A random amount between 0 and 100% of the passengers in the from sector
+        move_amount = random_between_range(
+            self.configuration.environment_random_seed,
+            range(0, environment.station.sectors[current_index].amount)
+        )
+
         # If the sector to the left has fewer passengers than the
         # current sector and fewer than the sector to the right,
         # then we move some passengers to the left sector.
         if current_amount > left_amount <= right_amount:
-            PassengerDecisionEvent.__move_passengers(current_index, left_index, environment)
+            PassengerDecisionEvent.__move_passengers(move_amount, current_index, left_index, environment)
 
         # Otherwise, if the right has the least amount then
         # we move passengers to the right sector instead
         elif current_amount > right_amount <= left_amount:
-            PassengerDecisionEvent.__move_passengers(current_index, right_index, environment)
+            PassengerDecisionEvent.__move_passengers(move_amount, current_index, right_index, environment)
 
     def __handle_red_light(self, sector: StationSector, environment: Environment) -> None:
         """
@@ -202,20 +208,21 @@ class PassengerDecisionEvent(Event):
         return distances
 
     @staticmethod
-    def __move_passengers(from_index: int,
-                          to_index: int,
-                          environment: Environment) -> None:
+    def __move_passengers(
+            amount: int,
+            from_index: int,
+            to_index: int,
+            environment: Environment) -> None:
         """
         Helper function that move the passengers from on sector to another.
         Will randomly choose a number (of passengers) between 0% and 100% of the from_index sector
         that will be moved to the to_index sector.
         Args:
+            amount: The amount of passengers to be moved
             from_index: The sector index where we will move passengers from
             to_index: The sector index where we will move passengers to
             environment: The simulation environment
         """
-        # A random amount between 0 and 100% of the passengers in the from sector
-        amount = random_between_range(range(0, environment.station.sectors[from_index].amount))
         # Remove the passengers from the sector
         passengers = environment.station.sectors[from_index].remove(amount)
         # Add the passengers who are not compliant back to the from sector
