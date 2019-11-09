@@ -234,8 +234,8 @@ class Configuration:
     @property
     def environment_random_seed(self):
         """
-        Get the amount of time it takes to open a door
-        Returns: The time in seconds
+        Get the seed for the random functions
+        Returns: An integer
         """
         return self.__options['environment_random_seed']
 
