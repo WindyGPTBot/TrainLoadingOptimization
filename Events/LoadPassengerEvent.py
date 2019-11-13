@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import List
 
+from Components.StationSector import StationSector
 from Events.Event import Event
 from Events.MovePassengerEvent import MovePassengerEvent
 from Events.PrepareTrainEvent import PrepareTrainEvent
@@ -13,7 +14,8 @@ class LoadPassengerEvent(Event):
     Event representing the loading of passengers
     """
 
-    def __init__(self, timestamp: datetime, configuration: Configuration):
+    def __init__(self, sector: StationSector, timestamp: datetime, configuration: Configuration):
+        self.sector: StationSector = sector
         super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment) -> List[Event]:

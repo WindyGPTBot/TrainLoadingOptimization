@@ -1,3 +1,6 @@
+from Events.Event import Event
+
+
 class EventQueue:
     """
     EventQueue, queue of events currently queued up for execution
@@ -6,6 +9,6 @@ class EventQueue:
     def __init__(self):
         self.events = []
 
-    def get_next(self):
+    def get_next(self) -> Event:
         self.events.sort(key=lambda e: e.timestamp)
         return self.events.pop(0)
