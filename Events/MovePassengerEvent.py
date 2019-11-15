@@ -27,8 +27,11 @@ class MovePassengerEvent(Event):
     def fire(self, environment: Environment) -> List[Event]:
         # Remove the passenger from the sector
         passenger = self.sector.remove(1)
+
         # Get the nearest sector with least people
         free_sector = self.__get_nearby_free_sector(environment)
+        free_train = self.__is_train_full(environment)
+
         # Security catch to prevent None reference
         if free_sector is None and not environment.train.is_full():
             raise RuntimeError(
@@ -50,6 +53,17 @@ class MovePassengerEvent(Event):
         # We return the load event so that passenger can get loaded
         from Events.LoadPassengerEvent import LoadPassengerEvent  # Inline/local import to prevent reference error
         return [LoadPassengerEvent(free_sector, self.timestamp, self.configuration)]
+
+    def __is_train_full(self, environment: Environment) -> bool:
+        """
+        Check whether the train is full or not
+        """
+        train_sets = environment.train.train_sets
+        for t_set in train_sets:
+            # Check if any of the cars is not full
+            if any([c.is_full() for c in t_set.cars]):
+                return True
+        return False
 
     def __get_nearby_free_sector(self, environment: Environment) -> Optional[StationSector]:
         """
