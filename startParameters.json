@@ -2,6 +2,6 @@
   "lights": false,
   "train": [10, 5, 25, 8],
   "train_weight": 60000,
-  "station": [29, 8, 17, ],
+  "station": [29, 8, 17, 10],
   "station_distance": 1000
 }

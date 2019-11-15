@@ -18,6 +18,7 @@ class StationSector(PassengerContainer, Component):
         Initialize a new station sector
         """
         self.__index = index
+        self.__light = None
         if parameters is None:
             self.__light = Light(configuration)
         else:

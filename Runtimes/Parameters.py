@@ -28,7 +28,7 @@ class Parameters:
         Get the weight of the passengers on the train
         Returns: A list of lists. The list contains one list for each wagon, which contains all the weights of the passengers in that wagon
         """
-        return self.__options['train']
+        return self.__params['train']
 
     @property
     def train_weight(self) -> float:
@@ -37,7 +37,7 @@ class Parameters:
         Returns:
             float representing the weight in kilograms
         """
-        return self.__options['train_weight']
+        return self.__params['train_weight']
 
     @property
     def station_passengers(self) -> list:
@@ -45,7 +45,7 @@ class Parameters:
         Get the weight of the passengers on the station
         Returns: A list of lists. The list contains one list for each sector, which contains all the weights of the passengers in that sector
         """
-        return self.__options['station']
+        return self.__params['station']
 
     @property
     def station_distance(self) -> float:
@@ -54,4 +54,4 @@ class Parameters:
         Returns:
             a float representing the distance in kilometers
         """
-        return self.__options['station_distance']
+        return self.__params['station_distance']

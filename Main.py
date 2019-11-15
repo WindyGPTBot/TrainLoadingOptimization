@@ -52,5 +52,5 @@ if __name__ == '__main__':
         with open(sys.argv[pathIndex], 'rt') as spf:
             startParams = json.load(spf)
     # Run the application
-    application = ApplicationRunTime(options)
+    application = ApplicationRunTime(options, startParams)
     application.run()

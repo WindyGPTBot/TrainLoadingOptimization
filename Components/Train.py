@@ -125,7 +125,7 @@ class Train(PopulatableComponent):
         else:
             for train_set in self.train_sets:
                 for i in range(len(train_set.cars)):
-                    train_set.cars[i].add(parameters.train_passengers[i])
+                    train_set.cars[i].add(parameters.train_passengers[i], self.configuration)
 
     def __getitem__(self, item: int) -> TrainCar:
         """

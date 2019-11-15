@@ -16,7 +16,7 @@ class PopulatableComponent(Component):
         Initialize the populatable component. Will run the populate method.
         """
         super().__init__(configuration)
-        self.populate()
+        self.populate(parameters)
 
     @abstractmethod
     def populate(self, parameters: Parameters) -> None:
