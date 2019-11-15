@@ -1,6 +1,5 @@
 from Components.Component import Component
 from Components.PassengerContainer import PassengerContainer
-from Components.TrainSet import TrainSet
 from Runtimes.Configuration import Configuration
 
 
@@ -23,7 +22,7 @@ class TrainCar(PassengerContainer, Component):
         self.__train_set = train_set
 
     @property
-    def train_set(self) -> TrainSet:
+    def train_set(self):
         """
         Get the train that the car is in
         Returns:

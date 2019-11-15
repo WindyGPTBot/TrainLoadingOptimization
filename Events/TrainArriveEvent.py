@@ -3,6 +3,7 @@ from typing import List, Dict
 
 from Events.Event import Event
 from Events.LoadPassengerEvent import LoadPassengerEvent
+from Events.MovePassengerEvent import MovePassengerEvent
 from Events.UnloadPassengerEvent import UnloadPassengerEvent
 from Events.UnloadPassengersEvent import UnloadPassengersEvent
 from Helpers.DateTime import add_seconds
@@ -15,6 +16,7 @@ class TrainArriveEvent(Event):
     """
     Event that represents when the train arrives at the station
     """
+
     def __init__(self, timestamp: datetime, configuration: Configuration):
         """
         Initialize a new TrainArriveEvent
@@ -35,18 +37,30 @@ class TrainArriveEvent(Event):
         # This is where we store the events we create under here
         events = []
 
-        # We loop through the passengers_leaving_amount that maps
-        # the sector index to amount of passengers leaving the
-        # train car which is parked at that station sector index.
-        # If there are zero passengers leaving at a sector, then
-        # we can start loading passengers into that car.
-        for index, amount in passengers_leaving_amount.items():
-            sector = environment.station.sectors[index]
-            if amount > 0:
-                events.append(
-                    UnloadPassengerEvent(sector.train_car, sector, amount, self.timestamp, self.configuration))
+        # We create an event line for each sector, so that we can
+        # parallelize each section. This means all cars can start
+        # load and unload each car for it self.
+        for sector in environment.station.sectors:
+            # If the sector has a train car parked, and there are
+            # passengers who wants to leave, then we can start
+            # unloading. If no passengers are leaving, then we
+            # start loading the train car with passenges.
+            if sector.has_train_car():
+                amount_leaving = passengers_leaving_amount[sector.sector_index]
+                if amount_leaving > 0:
+                    events.append(UnloadPassengerEvent(sector.train_car,
+                                                       sector,
+                                                       amount_leaving,
+                                                       self.timestamp,
+                                                       self.configuration))
+                else:
+                    events.append(LoadPassengerEvent(sector, self.timestamp, self.configuration))
             else:
-                events.append(LoadPassengerEvent(sector, self.timestamp, self.configuration))
+                # If no train is parked then we must spawn a move passenger
+                # event for each passenger in that sector, so that they can
+                # move to a sector where there is a train parked.
+                for i in range(sector.amount):
+                    events.append(MovePassengerEvent(sector, self.timestamp, self.configuration))
 
         return events
 
@@ -67,7 +81,6 @@ class TrainArriveEvent(Event):
 
         for train_set in environment.train.train_sets:
             for train_car in train_set.cars:
-
                 # We first randomly choose using the configuration
                 # how many passengers should leave this car
                 passenger_count = len(train_car.passengers)
@@ -80,6 +93,5 @@ class TrainArriveEvent(Event):
                 amounts[sector_index] = int(nr_leaving)
                 # Increment the indexes
                 sector_index += 1
-            sector_index += 1
 
         return amounts

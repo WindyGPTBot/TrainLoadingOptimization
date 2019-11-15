@@ -21,8 +21,8 @@ class MovePassengerEvent(Event):
             timestamp: The event timestamp
             configuration: The simulation configuration
         """
-        super().__init__(timestamp, configuration)
         self.sector = sector
+        super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment) -> List[Event]:
         # Remove the passenger from the sector
@@ -40,7 +40,7 @@ class MovePassengerEvent(Event):
         )
         # We return the load event so that passenger can get loaded
         from Events.LoadPassengerEvent import LoadPassengerEvent  # Inline/local import to prevent reference error
-        return [LoadPassengerEvent(self.timestamp, self.configuration)]
+        return [LoadPassengerEvent(free_sector, self.timestamp, self.configuration)]
 
     def __get_nearby_free_sector(self, environment: Environment) -> Optional[StationSector]:
         """
