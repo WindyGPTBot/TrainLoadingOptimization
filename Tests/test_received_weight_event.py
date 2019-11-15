@@ -24,14 +24,17 @@ class TestReceivedWeightEvent(unittest.TestCase):
 
     def test_station_has_passengers(self):
         """
-            At least one of the train sectors has passengers.
+            At least one of the station sectors has passengers.
         """
         sectors = self.runtime.environment.station.sectors
         has_pas = False
 
         for sector in sectors:
             if sector.amount > 1:
-                self.assertTrue(has_pas)
+                has_pas = True
+
+        self.assertTrue(has_pas)
+
 
     def test_number_of_passengers_at_station(self):
         """
