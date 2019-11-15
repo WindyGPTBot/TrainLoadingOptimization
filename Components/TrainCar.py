@@ -1,5 +1,6 @@
 from Components.Component import Component
 from Components.PassengerContainer import PassengerContainer
+from Runtimes.Parameters import Parameters
 from Runtimes.Configuration import Configuration
 
 
@@ -8,7 +9,7 @@ class TrainCar(PassengerContainer, Component):
     Represents a single train car in a train set
     """
 
-    def __init__(self, index: int, configuration: Configuration, train_set):
+    def __init__(self, index: int, configuration: Configuration, parameters: Parameters, train_set):
         """
         Initialize a new train car component
         Args:
@@ -17,6 +18,8 @@ class TrainCar(PassengerContainer, Component):
         Component.__init__(self, configuration)
         PassengerContainer.__init__(self)
         self.__weight = 0
+        if parameters is not None:
+            self.__weight = parameters.train_weight / len(parameters.train_passengers)
         self.__opened = False
         self.__index = index
         self.__train_set = train_set

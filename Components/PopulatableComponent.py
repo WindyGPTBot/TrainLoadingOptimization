@@ -1,6 +1,7 @@
 from abc import abstractmethod
 
 from Components.Component import Component
+from Runtimes.Parameters import Parameters
 from Runtimes.Configuration import Configuration
 
 
@@ -10,7 +11,7 @@ class PopulatableComponent(Component):
     like trains and stations
     """
 
-    def __init__(self, configuration: Configuration):
+    def __init__(self, configuration: Configuration, parameters: Parameters):
         """
         Initialize the populatable component. Will run the populate method.
         """
@@ -18,7 +19,7 @@ class PopulatableComponent(Component):
         self.populate()
 
     @abstractmethod
-    def populate(self) -> None:
+    def populate(self, parameters: Parameters) -> None:
         """
         Populate the component.
         """

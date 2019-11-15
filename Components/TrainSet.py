@@ -1,5 +1,6 @@
 from typing import List
 
+from Runtimes.Parameters import Parameters
 from Runtimes.Configuration import Configuration
 from Components.TrainCar import TrainCar
 
@@ -9,13 +10,13 @@ class TrainSet:
     Represents a train set consisting usually of 4 train cars
     """
 
-    def __init__(self, index: int, configuration: Configuration):
+    def __init__(self, index: int, configuration: Configuration, parameters: Parameters):
         """
         Initialize a new train set
         Args:
             configuration: The configuration to create the train set with.
         """
-        self.__cars = self.__spawn_cars(configuration)
+        self.__cars = self.__spawn_cars(configuration, parameters)
         self.__index = index
 
     @property
@@ -35,7 +36,7 @@ class TrainSet:
         """
         return self.__cars
 
-    def __spawn_cars(self, configuration: Configuration) -> List[TrainCar]:
+    def __spawn_cars(self, configuration: Configuration, parameters: Parameters) -> List[TrainCar]:
         """
         Private static helper method that will spawn the cars for this train set based on the provided configuration
         Args:
@@ -44,6 +45,12 @@ class TrainSet:
         Returns: The spawned list of train cars
         """
         cars = []
-        for i in range(configuration.train_set_setup):
-            cars.append(TrainCar(i, configuration, self))
+        cars_count_range: range
+        if parameters is None:
+            cars_count_range = range(configuration.train_amount_of_sets)
+        else:
+            cars_count_range = range(0, len(parameters.train_passengers))
+
+        for i in cars_count_range:
+            cars.append(TrainCar(i, configuration, parameters, self))
         return cars

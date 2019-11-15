@@ -38,7 +38,7 @@ options: dict = {
     "environment_random_seed": None,
 }
 
-startParams: dict
+startParams: dict = None
 
 if __name__ == '__main__':
 

@@ -5,6 +5,7 @@ from Components.PopulatableComponent import PopulatableComponent
 from Components.TrainCar import TrainCar
 from Components.TrainSet import TrainSet
 from Helpers.Ranges import random_between_percentage
+from Runtimes.Parameters import Parameters
 from Runtimes.Configuration import Configuration
 
 
@@ -13,16 +14,16 @@ class Train(PopulatableComponent):
     This class represents the full train including the train sets and train cars.
     """
 
-    def __init__(self, configuration: Configuration):
+    def __init__(self, configuration: Configuration, parameters: Parameters):
         """
         Initialize a new train component
         """
-        self.__train_sets = Train.__create_train_sets(configuration)
+        self.__train_sets = Train.__create_train_sets(configuration, parameters)
         self.__stopped = True
         self.__parked_at = None
-        self.__weight = 0
-        self.__train_length = None
-        super().__init__(configuration)
+        self.__weight = parameters.train_weight
+        self.__train_length = len(parameters.train_passengers)
+        super().__init__(configuration, parameters)
 
     def __str__(self):
         return 'Train (w: {}, s: {}, p: {}, l: {})'.format(
@@ -89,13 +90,6 @@ class Train(PopulatableComponent):
             weight = 0  # Set it to zero instead
         self.__weight = weight
 
-    @weight.deleter
-    def weight(self):
-        """
-        Reset/Delete the weight by setting it to zero
-        """
-        self.__weight = 0
-
     def is_stopped(self) -> bool:
         """
         Get whether the train is stopped or driving
@@ -115,18 +109,23 @@ class Train(PopulatableComponent):
         """
         self.__stopped = True
 
-    def populate(self) -> None:
+    def populate(self, parameters: Parameters) -> None:
         """
         Populate the train cars with passengers
         """
-        rang = self.configuration.train_fullness  # Let us get the range of how full we want our train cars
-        cap = self.configuration.train_capacity  # Then we get the max capacity
-        for train_set in self.train_sets:
-            for car in train_set.cars:
-                # Then we generate a random percentage of the maximum capacity
-                # and then fill the train car with that random amount
-                amount = floor(random_between_percentage(self.configuration.environment_random_seed, rang, cap))
-                car.add(amount, self.configuration)
+        if parameters is None:
+            rang = self.configuration.train_fullness  # Let us get the range of how full we want our train cars
+            cap = self.configuration.train_capacity  # Then we get the max capacity
+            for train_set in self.train_sets:
+                for car in train_set.cars:
+                    # Then we generate a random percentage of the maximum capacity
+                    # and then fill the train car with that random amount
+                    amount = floor(random_between_percentage(self.configuration.environment_random_seed, rang, cap))
+                    car.add(amount, self.configuration)
+        else:
+            for train_set in self.train_sets:
+                for i in range(len(train_set.cars)):
+                    train_set.cars[i].add(parameters.train_passengers[i])
 
     def __getitem__(self, item: int) -> TrainCar:
         """
@@ -145,7 +144,7 @@ class Train(PopulatableComponent):
         return self.train_sets[set_index - 1].cars[car_index]
 
     @staticmethod
-    def __create_train_sets(configuration: Configuration) -> List[TrainSet]:
+    def __create_train_sets(configuration: Configuration, parameters: Parameters) -> List[TrainSet]:
         """
         Create the train sets for this train accordingly to the configuration
         Args:
@@ -153,6 +152,12 @@ class Train(PopulatableComponent):
         Returns: A list of the newly created train sets
         """
         sets: List[TrainSet] = []
-        for i in range(configuration.train_amount_of_sets):
-            sets.append(TrainSet(i, configuration))
+        train_sets_range: range
+        if parameters is not None:
+            train_sets_range = range(0, int(len(parameters.train_passengers) / 4))
+        else:
+            train_sets_range = range(configuration.train_amount_of_sets)
+
+        for i in train_sets_range:
+            sets.append(TrainSet(i, configuration, parameters))
         return sets

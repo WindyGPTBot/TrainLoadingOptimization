@@ -4,6 +4,7 @@ from Components.Station import Station
 from Components.StationSector import StationSector
 from Components.Train import Train
 from Components.TrainCar import TrainCar
+from Runtimes.Parameters import Parameters
 from Runtimes.Configuration import Configuration
 from Runtimes.Timing import Timing
 
@@ -12,10 +13,10 @@ class Environment:
     """
     Class holding all the components in the environment.
     """
-    def __init__(self, configuration: Configuration):
+    def __init__(self, configuration: Configuration, parameters: Parameters):
         self.__configuration: Configuration = configuration
-        self.__train: Train = Train(configuration)
-        self.__station: Station = Station(configuration)
+        self.__train: Train = Train(configuration, parameters)
+        self.__station: Station = Station(configuration, parameters)
         self.__timings: Timing = Timing()
 
     @property
