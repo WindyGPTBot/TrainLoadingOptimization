@@ -22,12 +22,9 @@ class LoadPassengerEvent(Event):
         # If this is a sector where there is no train parked,
         # but there are waiting passengers then we must move
         # those passengers to a sector where a train is parked.
-        if not self.sector.has_train_car():
-            self.logger.info("No train at sector {}. Moving passenger instead.".format(self.sector.sector_index))
-            return [MovePassengerEvent(self.sector, self.timestamp, self.configuration)]
         # Or we also want to move passengers wanting
         # to board the train but the train car is full.
-        elif self.sector.train_car.is_full():
+        if self.sector.has_train_car() and self.sector.train_car.is_full():
             self.logger.info("Train in sector {} is full. Moving passenger instead.".format(self.sector.sector_index))
             return [MovePassengerEvent(self.sector, self.timestamp, self.configuration)]
 
@@ -37,7 +34,8 @@ class LoadPassengerEvent(Event):
         passengers = self.sector.remove(1)
         # Security check so that we do not accidentally get an IndexError
         if len(passengers) == 0:
-            self.logger.warning("Unloaded zero passengers from section {}".format(self.sector.sector_index))
+            self.logger.warning("Removed zero passengers from sector {}".format(self.sector.sector_index))
+            return []
         # Add the passenger to the sector
         passenger = passengers[0]
         train_car.add(passenger)
@@ -48,7 +46,7 @@ class LoadPassengerEvent(Event):
         # Add the time it takes to load this passenger
         self.do_action(
             speed,
-            "Loading passenger into car {} in set {}".format(train_car.index, train_car.train_set.index)
+            "Loading passenger {} into car {} in set {}".format(passenger.id, train_car.index, train_car.train_set.index)
         )
         # The event is only responsible for a single
         # passenger, so we stop the loading in this
@@ -59,5 +57,7 @@ class LoadPassengerEvent(Event):
         # so we return another LoadPassengerEvent.
         if environment.station.is_empty() or environment.train.is_full():
             return [PrepareTrainEvent(self.timestamp, self.configuration)]
-        else:
+        elif self.sector.amount > 0:
             return [LoadPassengerEvent(self.sector, self.timestamp, self.configuration)]
+        else:
+            return []

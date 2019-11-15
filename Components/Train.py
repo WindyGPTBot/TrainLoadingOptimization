@@ -40,7 +40,7 @@ class Train(PopulatableComponent):
         """
         for train_set in self.train_sets:
             for train_car in train_set.cars:
-                if train_car.amount != self.configuration.train_capacity:
+                if not train_car.is_full():
                     return False
         return True
 

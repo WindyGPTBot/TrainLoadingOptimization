@@ -39,15 +39,12 @@ class UnloadPassengerEvent(Event):
 
         # Remove the passenger from the car
         passengers_removed = self.train_car.remove(1)
-
         # Let us just be sure we know what we are doing
         amount_removed = len(passengers_removed)
         if amount_removed != 1:
             raise RuntimeError("The car was not empty, but we retrieved {} passengers.".format(amount_removed))
-
         # Otherwise, we can continue
         passenger = passengers_removed[0]
-
         # The speed is computed by multiplying the passenger
         # size with the loading time. This means that if we
         # define the passenger size to be 0.5 and the time it
@@ -55,7 +52,10 @@ class UnloadPassengerEvent(Event):
         # unload two passengers in the seconds so that we "simulate"
         # that we unload two passengers at a time, but we are versatile
         # to make this work for any size of passengers.
-        speed = passenger.loading_time * passenger.size
+        if self.amount > 1:
+            speed = passenger.loading_time * passenger.size
+        else:
+            speed = passenger.loading_time
         action_description = 'Unloading passenger from train car {} in train set {}'.format(
             self.train_car.index, self.train_car.train_set.index)
         # Do the loading action that adds the time to the timestamp

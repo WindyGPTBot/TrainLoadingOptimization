@@ -30,8 +30,17 @@ class MovePassengerEvent(Event):
         # Get the nearest sector with least people
         free_sector = self.__get_nearby_free_sector(environment)
         # Security catch to prevent None reference
-        if free_sector is None:
-            raise RuntimeError("We could not find a free sector for the passenger. Should never have happened.")
+        if free_sector is None and not environment.train.is_full():
+            raise RuntimeError(
+                "We could not find a free sector for passenger, and the train is not full. "
+                "Should never have happened.")
+
+        # To stop the passenger from running around the station
+        # if the train is full, we return an empty list to prevent
+        # the passenger from ending in an endless loop.
+        if environment.train.is_full():
+            return []
+
         # Add the passenger to the free sector
         free_sector.add(passenger)
 

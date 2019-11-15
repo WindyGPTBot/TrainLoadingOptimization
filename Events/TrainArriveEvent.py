@@ -5,8 +5,6 @@ from Events.Event import Event
 from Events.LoadPassengerEvent import LoadPassengerEvent
 from Events.MovePassengerEvent import MovePassengerEvent
 from Events.UnloadPassengerEvent import UnloadPassengerEvent
-from Events.UnloadPassengersEvent import UnloadPassengersEvent
-from Helpers.DateTime import add_seconds
 from Helpers.Ranges import random_between_percentage
 from Runtimes.Configuration import Configuration
 from Runtimes.Environment import Environment
@@ -44,7 +42,7 @@ class TrainArriveEvent(Event):
             # If the sector has a train car parked, and there are
             # passengers who wants to leave, then we can start
             # unloading. If no passengers are leaving, then we
-            # start loading the train car with passenges.
+            # start loading the train car with passengers.
             if sector.has_train_car():
                 amount_leaving = passengers_leaving_amount[sector.sector_index]
                 if amount_leaving > 0:
@@ -53,7 +51,7 @@ class TrainArriveEvent(Event):
                                                        amount_leaving,
                                                        self.timestamp,
                                                        self.configuration))
-                else:
+                elif sector.amount > 0:
                     events.append(LoadPassengerEvent(sector, self.timestamp, self.configuration))
             else:
                 # If no train is parked then we must spawn a move passenger

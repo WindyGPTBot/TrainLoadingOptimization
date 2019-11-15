@@ -10,8 +10,6 @@ def random_between_range(seed: int, rang: range) -> int:
     Returns: An integer i where rang.start <= i < rang.stop
     """
     random.seed(seed)
-    if rang.start == rang.stop:
-        return rang.start
     if rang.start >= rang.stop:
         return rang.start
     return random.randint(rang.start, rang.stop)
