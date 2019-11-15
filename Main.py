@@ -1,5 +1,6 @@
 import json
 import logging.config
+import sys
 
 from Distributions.NormalDistribution import NormalDistribution
 from Runtimes.ApplicationRuntime import ApplicationRunTime
@@ -37,12 +38,19 @@ options: dict = {
     "environment_random_seed": None,
 }
 
+startParams: dict
+
 if __name__ == '__main__':
 
     # Create the logger configuration from the json file
-    with open('logging.json', 'rt') as f:
-        config = json.load(f)
+    with open('logging.json', 'rt') as lf:
+        config = json.load(lf)
     logging.config.dictConfig(config)
+    #Load start parameters
+    if "--params" in sys.argv:
+        pathIndex: int = sys.argv.index("--params") + 1
+        with open(sys.argv[pathIndex], 'rt') as spf:
+            startParams = json.load(spf)
     # Run the application
     application = ApplicationRunTime(options)
     application.run()
