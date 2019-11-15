@@ -4,6 +4,7 @@ from typing import List, Tuple
 from Components.PopulatableComponent import PopulatableComponent
 from Components.StationSector import StationSector
 from Helpers.Ranges import random_between_percentage
+from Runtimes.Parameters import Parameters
 from Runtimes.Configuration import Configuration
 
 
@@ -12,50 +13,56 @@ class Station(PopulatableComponent):
     Class representing the station component containing the station sectors
     """
 
-    def __init__(self, configuration: Configuration):
+    def __init__(self, configuration: Configuration, parameters: Parameters):
         """
         Initialize a new station
         Args:
             configuration: The configuration to create the station with
         """
-        self.__sectors = Station.__create_sectors(configuration)
-        super().__init__(configuration)
+        self.__sectors = Station.__create_sectors(configuration, parameters)
+        super().__init__(configuration, parameters)
 
     def __str__(self):
         return 'Station ({})'.format(', '.join([str(x) for x in self.sectors]))
 
-    def populate(self) -> None:
+    def populate(self, parameters: Parameters) -> None:
         """
         Populate the station sectors
         """
         # First, we get a list with integers that represent which sectors that have stairs
         stair_placement = self.configuration.station_stairs_placement
         total_waiting = 0
-        for sector in self.sectors:
-            # First we get the distances to all the stairs
-            distances = self.__calculate_distances(sector.sector_index, stair_placement)
+        if parameters is not None:
+            for sector in self.sectors:
+                # First we get the distances to all the stairs
+                distances = self.__calculate_distances(sector.sector_index, stair_placement)
 
-            # Get the lowest distance by the distance key in the tuple
-            ld_index, ld_distance = min(distances, key=lambda x: x[1])
-            rang = self.configuration.station_sector_fullness  # The range that defines the percentage range
-            cap = self.configuration.station_sector_passenger_max_count  # The sector max capacity
-            # The stair factor which defines the importance of the stair
-            stair_factor = self.configuration.station_stair_factor
-            # Calculate the amount of people in this sector based on the parameters above
-            amount = floor(
-                random_between_percentage(
-                    self.configuration.environment_random_seed,
-                    rang,
-                    cap
-                ) - ld_distance * stair_factor
-            )
-            # Sometimes we end up with a amount < 0, let us just set it to zero then
-            if amount < 0:
-                amount = 0
-            # Add the amount to the sector
-            sector.add(amount, self.configuration)
-            total_waiting += amount
-            self.logger.info("There are {} passengers waiting in sector {}".format(amount, sector.sector_index))
+                # Get the lowest distance by the distance key in the tuple
+                ld_index, ld_distance = min(distances, key=lambda x: x[1])
+                rang = self.configuration.station_sector_fullness  # The range that defines the percentage range
+                cap = self.configuration.station_sector_passenger_max_count  # The sector max capacity
+                # The stair factor which defines the importance of the stair
+                stair_factor = self.configuration.station_stair_factor
+                # Calculate the amount of people in this sector based on the parameters above
+                amount = floor(
+                    random_between_percentage(
+                        self.configuration.environment_random_seed,
+                        rang,
+                        cap
+                    ) - ld_distance * stair_factor
+                )
+                # Sometimes we end up with a amount < 0, let us just set it to zero then
+                if amount < 0:
+                    amount = 0
+                # Add the amount to the sector
+                sector.add(amount, self.configuration)
+                total_waiting += amount
+                self.logger.info("There are {} passengers waiting in sector {}".format(amount, sector.sector_index))
+        else:
+            for i in range(0,len(self.sectors)):
+                self.sectors[i].add(parameters.station_passengers[i])
+                total_waiting += parameters.station_passengers[i]
+                self.logger.info("There are {} passengers waiting in sector {}".format(parameters.station_passengers[i], self.sectors[i].sector_index))
         self.logger.info("There in total {} passengers waiting on the station".format(total_waiting))
 
     @property
@@ -83,13 +90,19 @@ class Station(PopulatableComponent):
         return distances
 
     @staticmethod
-    def __create_sectors(configuration: Configuration) -> List[StationSector]:
+    def __create_sectors(configuration: Configuration, parameters: Parameters) -> List[StationSector]:
         """
         Private static helper method to populate the station sectors
         """
         sectors = []
-        for i in range(configuration.station_sector_count):
-            sectors.append(StationSector(configuration, i))
+        sector_count: range
+        if parameters is not None:
+            sector_count = range(len(parameters.station_passengers))
+        else:
+            sector_count = range(configuration.train_amount_of_sets)
+
+        for i in sector_count:
+            sectors.append(StationSector(configuration, parameters, i))
         return sectors
 
     def is_empty(self) -> bool:

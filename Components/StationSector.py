@@ -4,6 +4,7 @@ from Components.Component import Component
 from Components.Light import Light
 from Components.PassengerContainer import PassengerContainer
 from Components.TrainCar import TrainCar
+from Runtimes.Parameters import Parameters
 from Runtimes.Configuration import Configuration
 
 
@@ -12,12 +13,16 @@ class StationSector(PassengerContainer, Component):
     Class representing a single station sector which can contain passengers
     """
 
-    def __init__(self, configuration: Configuration, index: int):
+    def __init__(self, configuration: Configuration, parameters: Parameters, index: int):
         """
         Initialize a new station sector
         """
         self.__index = index
-        self.__light = Light(configuration)
+        if parameters is None:
+            self.__light = Light(configuration)
+        else:
+            if parameters.lights:
+                self.__light = Light(configuration)
         self.__train_car: Optional[TrainCar] = None
         PassengerContainer.__init__(self)
         Component.__init__(self, configuration)
