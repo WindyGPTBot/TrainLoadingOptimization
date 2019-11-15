@@ -16,13 +16,14 @@ class TestPrepareTrainEvent(unittest.TestCase):
         """
         After running the simulation, we must make sure the train has left full.
         """
-        self.options['simulation_random_seed'] = 30
+        self.options['environment_random_seed'] = 30
         self.options['station_sector_fullness'] = range(100, 100)
         self.options['station_sector_passenger_max_count'] = 25
         self.options['train_capacity'] = 20
         self.options['train_set_setup'] = 1  # Amount of cars
         self.options['train_amount_of_sets'] = 2  # Amount of sets
         self.options['train_fullness'] = range(100, 100)
+        self.runtime = ApplicationRuntime.ApplicationRunTime(self.options)
 
         self.runtime.run()
         train_sets = self.runtime.environment.train.train_sets
