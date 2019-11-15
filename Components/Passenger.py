@@ -3,6 +3,7 @@ import random
 from Components.Component import Component
 from Helpers.Ranges import random_between_range
 from Runtimes.Configuration import Configuration
+from uuid import UUID, uuid4
 
 
 class Passenger(Component):
@@ -14,6 +15,7 @@ class Passenger(Component):
         """
         Initialize a new passenger component
         """
+        self.id: UUID = uuid4()
         self.speed = random_between_range(configuration.environment_random_seed, configuration.passenger_speed_range)
         self.loading_time = random_between_range(configuration.environment_random_seed, configuration.passenger_loading_time_range)
         self.weight = configuration.passenger_weight_distribution.generate_single()
