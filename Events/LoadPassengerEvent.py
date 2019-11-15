@@ -57,7 +57,7 @@ class LoadPassengerEvent(Event):
         # If the station is empty, we can start the departure.
         # Otherwise, there must be other passengers waiting
         # so we return another LoadPassengerEvent.
-        if environment.station.is_empty():
+        if environment.station.is_empty() or environment.train.is_full():
             return [PrepareTrainEvent(self.timestamp, self.configuration)]
         else:
             return [LoadPassengerEvent(self.sector, self.timestamp, self.configuration)]

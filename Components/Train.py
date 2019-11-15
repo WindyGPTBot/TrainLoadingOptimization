@@ -32,6 +32,18 @@ class Train(PopulatableComponent):
             self.train_car_length
         )
 
+    def is_full(self) -> bool:
+        """
+        Get whether the train is full or not
+        Returns:
+            True if full, False if not
+        """
+        for train_set in self.train_sets:
+            for train_car in train_set.cars:
+                if train_car.amount != self.configuration.train_capacity:
+                    return False
+        return True
+
     @property
     def parked_at(self) -> int:
         """
