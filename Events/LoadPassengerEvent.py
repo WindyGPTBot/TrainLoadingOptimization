@@ -5,6 +5,7 @@ from Components.StationSector import StationSector
 from Events.Event import Event
 from Events.MovePassengerEvent import MovePassengerEvent
 from Events.PrepareTrainEvent import PrepareTrainEvent
+from Helpers.Speed import compute_loading_speed
 from Runtimes import Configuration
 from Runtimes.Environment import Environment
 
@@ -42,7 +43,7 @@ class LoadPassengerEvent(Event):
         # As with the UnloadPassengerEvent we multiply the
         # loading time with the passenger size to allow
         # simulating two passengers loading at the same time.
-        speed = passenger.loading_time * passenger.size
+        speed = compute_loading_speed(passenger, self.sector.amount)
         # Add the time it takes to load this passenger
         self.do_action(
             speed,
