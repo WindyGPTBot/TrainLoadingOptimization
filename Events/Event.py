@@ -31,7 +31,7 @@ class Event(ABC):
         """
         raise NotImplementedError("fire method not implemented in {}".format(self.__class__.__name__))
 
-    def run(self, environment: Environment) -> List[Event]:
+    def __call__(self, environment: Environment) -> List[Event]:
         """
         Run the event with the provided environment
         Args:

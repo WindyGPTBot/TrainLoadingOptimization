@@ -33,7 +33,7 @@ class EventRunTime(RunTime):
         # Execute events until none are left
         while len(self.event_queue.events) > 0:
             try:
-                self.event_queue.events.extend(self.event_queue.get_next().run(self.environment))
+                self.event_queue.events.extend(self.event_queue.get_next()(self.environment))
             except RuntimeError as e:
                 self.logger.warning(e)
 
