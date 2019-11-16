@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from Components.StationSector import StationSector
 from Events.Event import Event
+from Helpers.Speed import compute_walking_speed
 from Runtimes.Configuration import Configuration
 from Runtimes.Environment import Environment
 
@@ -25,6 +26,10 @@ class MovePassengerEvent(Event):
         super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment) -> List[Event]:
+        # TODO: Maybe check if this needed
+        if self.sector.amount == 0:
+            return []
+
         # Remove the passenger from the sector
         passenger = self.sector.remove(1)
 
@@ -42,14 +47,16 @@ class MovePassengerEvent(Event):
         # if the train is full, we return an empty list to prevent
         # the passenger from ending in an endless loop.
         if environment.train.is_full():
+            self.logger.warning("The train is full for passenger {}".format(passenger[0].id))
             return []
 
         # Add the passenger to the free sector
         free_sector.add(passenger)
 
-        self.logger.info(
-            "Moved passenger from sector {} to sector {}".format(self.sector.sector_index, free_sector.sector_index)
-        )
+        distance = abs(self.sector.sector_index - free_sector.sector_index)
+        speed = compute_walking_speed(passenger[0], distance)
+        message = "Moved passenger from sector {} to sector {}".format(self.sector.sector_index, free_sector.sector_index)
+        self.do_action(speed, message)
         # We return the load event so that passenger can get loaded
         from Events.LoadPassengerEvent import LoadPassengerEvent  # Inline/local import to prevent reference error
         return [LoadPassengerEvent(free_sector, self.timestamp, self.configuration)]

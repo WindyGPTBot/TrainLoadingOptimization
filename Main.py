@@ -8,7 +8,7 @@ options: dict = {
     "passenger_weight_distribution": NormalDistribution(80, 10),
     "passenger_mean_weight": 80,
     "passenger_speed_range": range(5, 10),
-    "passenger_loading_time_range": range(1, 4),
+    "passenger_loading_time_range": range(4, 4),
     "passenger_regular_size": 0.5,
     "passenger_max_walk_range": range(0, 6),
     "passenger_compliance": 0.8,
