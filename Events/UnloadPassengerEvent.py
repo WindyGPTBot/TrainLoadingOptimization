@@ -9,10 +9,12 @@ from Runtimes.Configuration import Configuration
 from Runtimes.Environment import Environment
 from Helpers.Speed import compute_loading_speed
 
+
 class UnloadPassengerEvent(Event):
     """
     Event representing a single passenger leaving the train
     """
+    DOORS_OPENED = False
 
     def __init__(self, train_car: Optional[TrainCar], sector: StationSector, amount: int, timestamp: datetime, configuration: Configuration):
         self.amount = amount
@@ -33,7 +35,7 @@ class UnloadPassengerEvent(Event):
         if not self.train_car.is_open():
             self.train_car.open_door()
             self.do_action(
-                self.configuration.time_door_action,
+                self.configuration.time_door_action if not self.DOORS_OPENED else 0,
                 'Opening train car {} door in train set {}'.format(self.train_car.index, self.train_car.train_set.index)
             )
 

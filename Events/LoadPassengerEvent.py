@@ -28,6 +28,9 @@ class LoadPassengerEvent(Event):
         if self.sector.has_train_car() and self.sector.train_car.is_full():
             self.logger.info("Train in sector {} is full. Moving passenger instead.".format(self.sector.sector_index))
             return [MovePassengerEvent(self.sector, self.timestamp, self.configuration)]
+        elif not self.sector.has_train_car():
+            self.logger.info("No train in sector {}. Moving passenger instead.".format(self.sector.sector_index))
+            return [MovePassengerEvent(self.sector, self.timestamp, self.configuration)]
 
         # Get the train car parked at the current sector
         train_car = self.sector.train_car
@@ -60,5 +63,3 @@ class LoadPassengerEvent(Event):
             return [PrepareTrainEvent(self.timestamp, self.configuration)]
         elif self.sector.amount > 0:
             return [LoadPassengerEvent(self.sector, self.timestamp, self.configuration)]
-        else:
-            return []

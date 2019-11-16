@@ -41,6 +41,8 @@ class ReceiveWeightEvent(Event):
         # Store the sector index where the train is going to be parked
         environment.train.parked_at = self.__decide_where_to_park(environment)
 
+        self.logger.info("Parked train at sector {}".format(environment.train.parked_at))
+
         for i in range(environment.train.train_car_length):
             index = environment.train.parked_at + i
             environment.station.sectors[index].train_car = environment.train[i]

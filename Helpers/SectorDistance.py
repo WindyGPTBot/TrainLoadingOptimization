@@ -18,15 +18,21 @@ class SectorDistance:
         self.__matrix: Dict[int, Dict[LightStatus, List[StationSector]]] = dict()
         self.__compute()
 
-    def get_closest(self, status: LightStatus) -> Optional[StationSector]:
+    def get_closest(self, status: LightStatus, with_train: bool = True) -> Optional[StationSector]:
         """
         Get the closest sector with the provided light status
         Args:
             status: The status of the closest sector
+            with_train: Whether to select the closest sector with a train
         """
         for distance, matrix in self.__matrix.items():
             if status in matrix and len(matrix[status]) > 0:
-                return matrix[status][0]
+                if not with_train:
+                    return matrix[status][0]
+                else:
+                    for s in matrix[status]:
+                        if s.has_train_car():
+                            return s
         return None
 
     def has_sector_within_distance(self, distance: int, status: LightStatus) -> bool:
@@ -38,8 +44,13 @@ class SectorDistance:
         Returns:
             True if there is a StationSector within the distance with the given status
         """
-        return distance in self.__matrix and status in self.__matrix[distance] and len(
-            self.__matrix[distance][status]) > 0
+        for i in range(int(distance)):
+            if i <= distance \
+                    and i in self.__matrix \
+                    and status in self.__matrix[i] \
+                    and len(self.__matrix[i][status]) > 0:
+                return True
+        return False
 
     def get_sector_within_distance(self, distance: int, status: LightStatus, with_least: bool = False) -> StationSector:
         """
@@ -54,14 +65,15 @@ class SectorDistance:
         Returns:
             The StationSector with the status within the distance
         """
-        if not with_least:
-            return self.__matrix[distance][status][0]
-
-        least = self.__matrix[distance][status][0]
-        for sector in self.__matrix[distance][status]:
-            if sector.amount < least.amount:
-                least = sector
-        return least
+        for i in range(int(distance)):
+            if i <= distance and i in self.__matrix:
+                if not with_least:
+                    return self.__matrix[i][status][0]
+                least = None
+                for sector in self.__matrix[i][status]:
+                    if sector.amount < least.amount:
+                        least = sector
+                return least
 
     def __compute(self) -> None:
         """

@@ -26,16 +26,12 @@ class MovePassengerEvent(Event):
         super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment) -> List[Event]:
-        # TODO: Maybe check if this needed
-        if self.sector.amount == 0:
-            return []
 
         # Remove the passenger from the sector
         passenger = self.sector.remove(1)
 
         # Get the nearest sector with least people
         free_sector = self.__get_nearby_free_sector(environment)
-        free_train = self.__is_train_full(environment)
 
         # Security catch to prevent None reference
         if free_sector is None and not environment.train.is_full():
@@ -83,32 +79,27 @@ class MovePassengerEvent(Event):
             Return None in cases where we could not find a station sector. Should never be the case.
         """
         current_index = self.sector.sector_index
+        left_index = current_index - 1
+        right_index = current_index + 1
 
-        # We loop through the length of the train to find a sector
-        for i in range(environment.train.train_car_length):
-            left_index = current_index - (i + 1)
-            right_index = current_index + (i + 1)
+        least_sector = None
 
+        for i in range(self.configuration.station_sector_count):
+            if least_sector is not None:
+                break
             left_sector = None
             right_sector = None
-
-            if left_index >= 0 and environment.station.sectors[left_index].has_train_car():
+            if left_index >= 0:
                 left_sector = environment.station.sectors[left_index]
-            if right_index < self.configuration.station_sector_count \
-                    and environment.station.sectors[right_index].has_train_car():
+            if right_index < self.configuration.station_sector_count:
                 right_sector = environment.station.sectors[right_index]
 
-            # If we could not find a sector to the left and we found one
-            # to the right, then we just choose the right
-            if left_sector is None and right_sector is not None:
-                return right_sector
-            # And the other way around, then we choose the left
-            elif right_sector is None and left_sector is not None:
-                return left_sector
-            elif left_sector is not None and right_sector is not None:
-                # If the left sector has fewer people than the right,
-                # then we choose that. Otherwise, we choose the right.
-                if left_sector.amount < right_sector.amount:
-                    return left_sector
-                else:
-                    return right_sector
+            if left_sector is not None and right_sector is not None:
+                least_sector = left_sector if left_sector.amount < right_sector.amount else right_sector
+            elif left_sector is not None:
+                least_sector = left_sector
+            elif right_sector is not None:
+                least_sector = right_sector
+            left_index += 1
+            right_index += 1
+        return least_sector
