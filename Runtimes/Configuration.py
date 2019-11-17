@@ -143,6 +143,15 @@ class Configuration:
         return self.__options['station_distance']
 
     @property
+    def station_have_lights(self):
+        """
+        Get whether the station have lights
+        Returns:
+            True if the station have lights, false if it does not
+        """
+        return self.__options['station_have_lights']
+
+    @property
     def train_fullness(self) -> range:
         """
         Get a percentage of how full the trains should be. The fullness is represented as a range object,
