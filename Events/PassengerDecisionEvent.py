@@ -149,10 +149,18 @@ class PassengerDecisionEvent(Event):
             able_distance = self.__time_to_move / passenger.speed
 
             closest_green_sector = matrix.get_closest(LightStatus.GREEN)
-            can_move_to_green_sector = able_distance <= sector_distance(sector, closest_green_sector)
+            try:
+                green_distance = sector_distance(sector, closest_green_sector)
+                can_move_to_green_sector = able_distance <= green_distance
+            except TypeError:
+                can_move_to_green_sector = False
 
             closest_yellow_sector = matrix.get_closest(LightStatus.YELLOW)
-            can_move_to_yellow_sector = able_distance <= sector_distance(sector, closest_yellow_sector)
+            try:
+                yellow_distance = sector_distance(sector, closest_yellow_sector)
+                can_move_to_yellow_sector = able_distance <= yellow_distance
+            except TypeError:
+                can_move_to_yellow_sector = False
 
             if closest_green_sector is not None and can_move_to_green_sector:
                 sector.remove_passenger(passenger)
