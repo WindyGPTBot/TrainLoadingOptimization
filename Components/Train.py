@@ -172,3 +172,11 @@ class Train(PopulatableComponent):
         for i in range(configuration.train_amount_of_sets):
             sets.append(TrainSet(i, configuration))
         return sets
+
+    @property
+    def amount_passengers(self) -> int:
+        """
+        Get the total passengers in this train.
+        Returns: a sum of all passengers inside cars inside all train set.
+        """
+        return sum([car.amount for t_set in self.train_sets for car in t_set.cars])
