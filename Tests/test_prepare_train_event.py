@@ -45,6 +45,7 @@ class TestPrepareTrainEvent(unittest.TestCase):
         self.options['train_set_setup'] = 1  # Amount of cars
         self.options['train_amount_of_sets'] = 2  # Amount of sets
         self.options['train_fullness'] = range(100, 100)
+        self.options['train_unload_percent'] = range(100, 100)
         self.runtime = ApplicationRuntime.ApplicationRunTime(self.options)
 
         self.assertTrue(
