@@ -32,5 +32,6 @@ class PrepareTrainEvent(Event):
         # Stop the timer once this event has concluded,
         # as we do not care about weighing the train again
         environment.timings.stop_timer(self.timestamp)
+        environment.train.drive()
         return []
 

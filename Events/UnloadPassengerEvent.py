@@ -7,12 +7,14 @@ from Events.Event import Event
 from Events.LoadPassengerEvent import LoadPassengerEvent
 from Runtimes.Configuration import Configuration
 from Runtimes.Environment import Environment
+from Helpers.Speed import compute_loading_speed
 
 
 class UnloadPassengerEvent(Event):
     """
     Event representing a single passenger leaving the train
     """
+    DOORS_OPENED = False
 
     def __init__(self, train_car: Optional[TrainCar], sector: StationSector, amount: int, timestamp: datetime, configuration: Configuration):
         self.amount = amount
@@ -33,7 +35,7 @@ class UnloadPassengerEvent(Event):
         if not self.train_car.is_open():
             self.train_car.open_door()
             self.do_action(
-                self.configuration.time_door_action,
+                self.configuration.time_door_action if not self.DOORS_OPENED else 0,
                 'Opening train car {} door in train set {}'.format(self.train_car.index, self.train_car.train_set.index)
             )
 
@@ -52,10 +54,7 @@ class UnloadPassengerEvent(Event):
         # unload two passengers in the seconds so that we "simulate"
         # that we unload two passengers at a time, but we are versatile
         # to make this work for any size of passengers.
-        if self.amount > 1:
-            speed = passenger.loading_time * passenger.size
-        else:
-            speed = passenger.loading_time
+        speed = compute_loading_speed(passenger, self.amount)
         action_description = 'Unloading passenger from train car {} in train set {}'.format(
             self.train_car.index, self.train_car.train_set.index)
         # Do the loading action that adds the time to the timestamp

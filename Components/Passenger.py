@@ -29,4 +29,4 @@ class Passenger(Component):
 
     def is_compliant(self) -> bool:
         random.seed(self.configuration.environment_random_seed)
-        return random.random() >= self.configuration.passenger_compliance
+        return random.random() <= self.configuration.passenger_compliance

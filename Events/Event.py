@@ -53,7 +53,7 @@ class Event(ABC):
         # Format message a little bit
         action_descriptor = ": {}".format(description) if description != "" else description
         # Log the action
-        self.logger.info("{} performing action that takes {}{}".format(__name__, time, action_descriptor))
+        self.logger.info("{} - {} seconds: {} ".format(self.timestamp, time, action_descriptor))
         # Add the time to the timestamp
         self.timestamp = add_seconds(self.timestamp, time)
 
