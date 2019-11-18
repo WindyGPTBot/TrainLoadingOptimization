@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from Components.StationSector import StationSector
 from Events.Event import Event
+from Helpers.Distances import sector_distance
 from Helpers.Speed import compute_walking_speed
 from Runtimes.Configuration import Configuration
 from Runtimes.Environment import Environment
@@ -56,7 +57,7 @@ class MovePassengerEvent(Event):
         self.do_action(speed, message)
         # We return the load event so that passenger can get loaded
         from Events.LoadPassengerEvent import LoadPassengerEvent  # Inline/local import to prevent reference error
-        return [LoadPassengerEvent(free_sector, 1, self.timestamp, self.configuration)]
+        return [LoadPassengerEvent(free_sector, free_sector.amount, self.timestamp, self.configuration)]
 
     def __get_nearby_free_sector(self, environment: Environment) -> Optional[StationSector]:
         """
@@ -68,34 +69,11 @@ class MovePassengerEvent(Event):
             The nearest StationSector with the least people.
             Return None in cases where we could not find a station sector. Should never be the case.
         """
-        current_index = self.sector.sector_index
-        max_count = self.configuration.station_sector_passenger_max_count
-        left_index = current_index - 1
-        right_index = current_index + 1
-
         least_sector = None
-
-        for i in range(self.configuration.station_sector_count):
-            if least_sector is not None:
-                break
-            left_sector = None
-            right_sector = None
-            if left_index >= 0:
-                left_sector = environment.station.sectors[left_index]
-            if right_index < self.configuration.station_sector_count:
-                right_sector = environment.station.sectors[right_index]
-
-            if left_sector is not None and right_sector is not None:
-                if left_sector.amount < max_count and right_sector.amount < max_count:
-                    least_sector = left_sector if left_sector.amount < right_sector.amount else right_sector
-                elif right_sector.amount < max_count:
-                    least_sector = right_sector
-                elif left_sector.amount < max_count:
-                    least_sector = left_sector
-            elif left_sector is not None and left_sector.amount < max_count:
-                least_sector = left_sector
-            elif right_sector is not None and right_sector.amount < max_count:
-                least_sector = right_sector
-            left_index += 1
-            right_index += 1
+        least_distance = self.configuration.station_sector_count
+        for sector in environment.station.sectors:
+            if sector.has_train_car() and not sector.train_car.is_full():
+                dist = sector_distance(self.sector, sector)
+                if dist < least_distance and dist != 0:
+                    least_sector = sector
         return least_sector

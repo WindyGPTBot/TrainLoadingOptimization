@@ -47,13 +47,14 @@ class TrainArriveEvent(Event):
             # start loading the train car with passengers.
             if sector.has_train_car():
                 amount_leaving = passengers_leaving_amount[sector.sector_index]
-                events.append(UnloadPassengerEvent(sector.train_car,
-                                                   sector,
-                                                   amount_leaving,
-                                                   self.timestamp,
-                                                   self.configuration))
-            elif sector.amount > 0:
-                events.append(LoadPassengerEvent(sector, sector.amount, self.timestamp, self.configuration))
+                if amount_leaving > 0:
+                    events.append(UnloadPassengerEvent(sector.train_car,
+                                                       sector,
+                                                       amount_leaving,
+                                                       self.timestamp,
+                                                       self.configuration))
+                else:
+                    events.append(LoadPassengerEvent(sector, sector.amount, self.timestamp, self.configuration))
             else:
                 # If no train is parked then we must spawn a move passenger
                 # event for each passenger in that sector, so that they can

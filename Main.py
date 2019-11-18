@@ -9,14 +9,14 @@ from Runtimes.Environment import Environment
 options: dict = {
     "passenger_weight_distribution": NormalDistribution(80, 10),
     "passenger_mean_weight": 80,
-    "passenger_speed_range": range(10, 10),
+    "passenger_speed_range": range(5, 5),
     "passenger_loading_time_range": range(4, 4),
     "passenger_regular_size": 0.5,
     "passenger_max_walk_range": range(4, 4),
     "passenger_compliance": 1,
     "train_capacity": 75,
-    "train_fullness": range(30, 60),
-    "train_unload_percent": range(30, 50),
+    "train_fullness": range(30, 30),
+    "train_unload_percent": range(10, 10),
     "train_set_setup": 4,
     "train_amount_of_sets": 2,
     "train_park_at_index": None,
@@ -42,6 +42,10 @@ if __name__ == '__main__':
     logging.config.dictConfig(config)
 
     # Run the application
-
-    application = ApplicationRunTime(options)
-    application.run()
+    times = 5
+    mean = 0
+    for i in range(times):
+        application = ApplicationRunTime(options)
+        application.run()
+        mean += application.environment.timings.turn_around_time
+    print("Mean {}".format(mean/times))
