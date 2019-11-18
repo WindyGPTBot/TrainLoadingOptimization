@@ -63,3 +63,4 @@ class LoadPassengerEvent(Event):
             return [PrepareTrainEvent(self.timestamp, self.configuration)]
         elif self.sector.amount > 0:
             return [LoadPassengerEvent(self.sector, self.timestamp, self.configuration)]
+        return []
