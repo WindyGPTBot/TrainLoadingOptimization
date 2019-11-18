@@ -21,7 +21,6 @@ class LoadPassengerEvent(Event):
         super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment) -> List[Event]:
-
         # If this is a sector where there is no train parked,
         # but there are waiting passengers then we must move
         # those passengers to a sector where a train is parked.
@@ -66,6 +65,12 @@ class LoadPassengerEvent(Event):
         # so we return another LoadPassengerEvent.
         if environment.station.is_empty() or environment.train.is_full():
             return [PrepareTrainEvent(self.timestamp, self.configuration)]
+        elif self.sector.train_car.is_full() and self.sector.amount > 0:
+            events = []
+            for i in range(self.sector.amount):
+                events.append(MovePassengerEvent(self.sector, self.timestamp, self.configuration))
+            return events
         elif self.sector.amount > 0:
             return [LoadPassengerEvent(self.sector, self.amount - 1, self.timestamp, self.configuration)]
-        return []
+        elif self.sector.empty() or self.amount == 0:
+            return []

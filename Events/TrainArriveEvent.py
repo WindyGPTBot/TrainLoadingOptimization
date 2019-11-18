@@ -73,6 +73,9 @@ class TrainArriveEvent(Event):
             A dictionary that maps the sector index to how many
             leaves from the train car at that station sector.
         """
+        if isinstance(self.configuration.train_unload_percent, (list, dict)):
+            return self.configuration.train_unload_percent
+
         unload_range = self.configuration.train_unload_percent
 
         sector_index = environment.train.parked_at

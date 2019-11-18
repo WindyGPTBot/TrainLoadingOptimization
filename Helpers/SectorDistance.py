@@ -69,7 +69,7 @@ class SectorDistance:
             if i <= distance and i in self.__matrix:
                 if not with_least:
                     return self.__matrix[i][status][0]
-                least = None
+                least = self.__matrix[i][status][0]
                 for sector in self.__matrix[i][status]:
                     if sector.amount < least.amount:
                         least = sector

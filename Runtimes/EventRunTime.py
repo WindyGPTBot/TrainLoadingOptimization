@@ -34,5 +34,7 @@ class EventRunTime(RunTime):
         while len(self.event_queue.events) > 0:
             events = self.event_queue.get_next()(self.environment)
             self.event_queue.events.extend(events)
-
-        self.logger.info("Concluded with a duration of {} seconds".format(self.environment.timings.turn_around_time))
+        try:
+            self.logger.info("Concluded with a duration of {} seconds".format(self.environment.timings.turn_around_time))
+        except RuntimeError as e:
+            self.logger.critical(e)

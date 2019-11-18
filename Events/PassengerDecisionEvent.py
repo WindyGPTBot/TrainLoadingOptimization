@@ -116,10 +116,10 @@ class PassengerDecisionEvent(Event):
         """
         # If there is not a green sector right next to the yellow light,
         # then the passengers don't want to move from the yellow sector.
-        if not matrix.has_sector_within_distance(1, LightStatus.GREEN):
+        if not matrix.has_sector_within_distance(2, LightStatus.GREEN):
             return
         # Get the green sector next to the provided sector with the least passengers waiting
-        closest_sector = matrix.get_sector_within_distance(1, LightStatus.GREEN, True)
+        closest_sector = matrix.get_sector_within_distance(2, LightStatus.GREEN, True)
 
         move_amount = random_between_range(
             self.configuration.environment_random_seed,
