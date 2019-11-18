@@ -102,3 +102,11 @@ class Station(PopulatableComponent):
             if len(s.passengers) > 0:
                 return False
         return True
+
+    @property
+    def amount_passengers(self) -> int:
+        """
+        Get the total passengers in this train.
+        Returns: amount of passengers inside all sectors.
+        """
+        return sum([s.amount for s in self.sectors])
