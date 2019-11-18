@@ -15,11 +15,13 @@ class LoadPassengerEvent(Event):
     Event representing the loading of passengers
     """
 
-    def __init__(self, sector: StationSector, timestamp: datetime, configuration: Configuration):
+    def __init__(self, sector: StationSector, amount: int, timestamp: datetime, configuration: Configuration):
         self.sector: StationSector = sector
+        self.amount = amount
         super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment) -> List[Event]:
+
         # If this is a sector where there is no train parked,
         # but there are waiting passengers then we must move
         # those passengers to a sector where a train is parked.
@@ -28,7 +30,7 @@ class LoadPassengerEvent(Event):
         if self.sector.has_train_car() and self.sector.train_car.is_full():
             self.logger.info("Train in sector {} is full. Moving passenger instead.".format(self.sector.sector_index))
             return [MovePassengerEvent(self.sector, self.timestamp, self.configuration)]
-        elif not self.sector.has_train_car():
+        if not self.sector.has_train_car():
             self.logger.info("No train in sector {}. Moving passenger instead.".format(self.sector.sector_index))
             return [MovePassengerEvent(self.sector, self.timestamp, self.configuration)]
 
@@ -39,19 +41,22 @@ class LoadPassengerEvent(Event):
         # Security check so that we do not accidentally get an IndexError
         if len(passengers) == 0:
             self.logger.warning("Removed zero passengers from sector {}".format(self.sector.sector_index))
-            return []
-        # Add the passenger to the sector
-        passenger = passengers[0]
-        train_car.add(passenger)
-        # As with the UnloadPassengerEvent we multiply the
-        # loading time with the passenger size to allow
-        # simulating two passengers loading at the same time.
-        speed = compute_loading_speed(passenger, self.sector.amount)
-        # Add the time it takes to load this passenger
-        self.do_action(
-            speed,
-            "Loading passenger {} into car {} in set {}".format(passenger.id, train_car.index, train_car.train_set.index)
-        )
+        else:
+            # Add the passenger to the sector
+            passenger = passengers[0]
+            self.sector.train_car.add(passenger)
+            # As with the UnloadPassengerEvent we multiply the
+            # loading time with the passenger size to allow
+            # simulating two passengers loading at the same time.
+            speed = compute_loading_speed(passenger, self.sector.amount)
+            # Add the time it takes to load this passenger
+            self.do_action(
+                speed,
+                "Loading passenger {} into car {} in set {} at sector {}".format(passenger.id,
+                                                                                 train_car.index,
+                                                                                 train_car.train_set.index,
+                                                                                 self.sector.sector_index)
+            )
         # The event is only responsible for a single
         # passenger, so we stop the loading in this
         # event once the passenger has been added to
@@ -62,4 +67,5 @@ class LoadPassengerEvent(Event):
         if environment.station.is_empty() or environment.train.is_full():
             return [PrepareTrainEvent(self.timestamp, self.configuration)]
         elif self.sector.amount > 0:
-            return [LoadPassengerEvent(self.sector, self.timestamp, self.configuration)]
+            return [LoadPassengerEvent(self.sector, self.amount - 1, self.timestamp, self.configuration)]
+        return []

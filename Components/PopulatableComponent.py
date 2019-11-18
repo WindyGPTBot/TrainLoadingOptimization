@@ -24,3 +24,10 @@ class PopulatableComponent(Component):
         """
         raise NotImplementedError("Populate method not implemented in " + self.__class__.__name__)
 
+    @abstractmethod
+    def amount_passengers(self) -> int:
+        """
+        Populate the component.
+        """
+        raise NotImplementedError("Populate method not implemented in " + self.__class__.__name__)
+

@@ -32,6 +32,7 @@ class EventRunTime(RunTime):
 
         # Execute events until none are left
         while len(self.event_queue.events) > 0:
-            self.event_queue.events.extend(self.event_queue.get_next()(self.environment))
+            events = self.event_queue.get_next()(self.environment)
+            self.event_queue.events.extend(events)
 
         self.logger.info("Concluded with a duration of {} seconds".format(self.environment.timings.turn_around_time))

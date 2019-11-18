@@ -34,15 +34,18 @@ class UnloadPassengerEvent(Event):
         # We must open the door before we can leave
         if not self.train_car.is_open():
             self.train_car.open_door()
+            action_time = self.configuration.time_door_action if not UnloadPassengerEvent.DOORS_OPENED else 0
             self.do_action(
-                self.configuration.time_door_action if not self.DOORS_OPENED else 0,
+                action_time,
                 'Opening train car {} door in train set {}'.format(self.train_car.index, self.train_car.train_set.index)
             )
+            UnloadPassengerEvent.DOORS_OPENED = True
 
         # Remove the passenger from the car
         passengers_removed = self.train_car.remove(1)
         # Let us just be sure we know what we are doing
         amount_removed = len(passengers_removed)
+
         if amount_removed != 1:
             raise RuntimeError("The car was not empty, but we retrieved {} passengers.".format(amount_removed))
         # Otherwise, we can continue
@@ -64,11 +67,11 @@ class UnloadPassengerEvent(Event):
         # was last, then we start loading into the car. Else, we
         # just continue the unloading
         if self.train_car.amount == 0 or self.amount == 0:
-            return [LoadPassengerEvent(self.sector, self.timestamp, self.configuration)]
+            return [LoadPassengerEvent(self.sector, self.sector.amount, self.timestamp, self.configuration)]
         else:
             return [UnloadPassengerEvent(
                 self.train_car,
                 self.sector,
-                self.amount - 1,
+                self.sector.amount,
                 self.timestamp,
                 self.configuration)]

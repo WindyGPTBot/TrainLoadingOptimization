@@ -5,6 +5,8 @@ from Events.Event import Event
 from Events.LoadPassengerEvent import LoadPassengerEvent
 from Events.MovePassengerEvent import MovePassengerEvent
 from Events.UnloadPassengerEvent import UnloadPassengerEvent
+from Helpers.DateTime import add_seconds
+from Helpers.Speed import compute_loading_speed
 from Helpers.Ranges import random_between_percentage
 from Runtimes.Configuration import Configuration
 from Runtimes.Environment import Environment
@@ -51,8 +53,8 @@ class TrainArriveEvent(Event):
                                                        amount_leaving,
                                                        self.timestamp,
                                                        self.configuration))
-                elif sector.amount > 0:
-                    events.append(LoadPassengerEvent(sector, self.timestamp, self.configuration))
+                else:
+                    events.append(LoadPassengerEvent(sector, sector.amount, self.timestamp, self.configuration))
             else:
                 # If no train is parked then we must spawn a move passenger
                 # event for each passenger in that sector, so that they can

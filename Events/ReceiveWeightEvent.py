@@ -47,6 +47,12 @@ class ReceiveWeightEvent(Event):
             index = environment.train.parked_at + i
             environment.station.sectors[index].train_car = environment.train[i]
 
+        # To prevent the lights being set when there are no lights,
+        # then we just continue from here without creating the
+        # PassengerDecisionEvent as we would have otherwise.
+        if not self.configuration.station_have_lights:
+            return []
+
         # Now we loop through all the sectors and test the weight threshold of each car
         # and then light each station sector light accordingly.
         for i, sector in enumerate(environment.station.sectors):
@@ -55,11 +61,8 @@ class ReceiveWeightEvent(Event):
             if not sector.has_train_car():
                 continue
 
-            # Get the train car at the current sector. We minus by the index where the train is parked,
-            # because if the train is parked at index 3, then the i=3 and therefore get train car number 3.
-            # By subtracting the parked_at index, then we get train car 0, 1 and so forth.
-            # We can do this because of the security checks above.
-            train_car = environment.train[i - environment.train.parked_at]
+            # Get the train car at the current sector.
+            train_car = sector.train_car
             weight = train_car.weight
 
             # Light the sector lights accordingly.
@@ -74,7 +77,7 @@ class ReceiveWeightEvent(Event):
                 ReceiveWeightEvent.__set_light_status(sector.sector_index, LightStatus.RED, environment)
         return [
             PassengerDecisionEvent(
-                add_seconds(self.timestamp, 0),
+                self.timestamp,
                 self.train_arrive_time,
                 self.configuration
             )]

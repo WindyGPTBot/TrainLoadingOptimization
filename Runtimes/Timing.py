@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 
 class Timing:
@@ -7,8 +8,8 @@ class Timing:
     """
 
     def __init__(self):
-        self.__start_time: datetime = None
-        self.__stop_time: datetime = None
+        self.__start_time: Optional[datetime] = None
+        self.__stop_time: Optional[datetime] = None
 
     @property
     def turn_around_time(self) -> float:
@@ -20,7 +21,7 @@ class Timing:
         if self.__start_time is None:
             raise RuntimeError("You must start the timer before getting the turn around time")
         if self.__stop_time is None:
-            raise RuntimeError("You must stop the timer before the turn around time")
+            raise RuntimeError("You must stop the timer before getting the turn around time")
         # Get the time difference between the stop and start timers
         diff = self.__stop_time - self.__start_time
         # Get the total difference in seconds

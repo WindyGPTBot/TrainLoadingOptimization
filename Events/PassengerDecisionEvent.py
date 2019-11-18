@@ -40,9 +40,11 @@ class PassengerDecisionEvent(Event):
         return []
 
     def __handle_none_light(self, matrix: SectorDistance, sector: StationSector, environment: Environment) -> None:
+        amount_to_move = sector.amount
         amount_moved = 0
         moved_to = None
-        for passenger in sector.passengers:
+        for i in range(sector.amount):
+            passenger = sector.remove(1)[0]
             able_distance = self.__time_to_move / passenger.speed
 
             closest_green_sector = matrix.get_closest(LightStatus.GREEN)
@@ -89,9 +91,10 @@ class PassengerDecisionEvent(Event):
         moved_to = moved_to if amount_moved > 0 else sector.sector_index
 
         self.logger.info(
-            "Moved {} passengers from sector {} to {} due to no light".format(amount_moved,
-                                                                              sector.sector_index,
-                                                                              moved_to))
+            "Moved {} passengers from sector {} with a total of {} to {} due to no light".format(amount_moved,
+                                                                                                 sector.sector_index,
+                                                                                                 amount_to_move,
+                                                                                                 moved_to))
 
     def __handle_green_light(self, matrix: SectorDistance, sector: StationSector, environment: Environment) -> None:
         """
@@ -103,7 +106,8 @@ class PassengerDecisionEvent(Event):
         """
         return None
 
-    def __handle_yellow_light(self, matrix: SectorDistance, sector: StationSector, environment: Environment) -> None:
+    def __handle_yellow_light(self, matrix: SectorDistance, sector: StationSector,
+                              environment: Environment) -> None:
         """
         This method handles what the passengers in a section with a yellow light should do
         Args:
