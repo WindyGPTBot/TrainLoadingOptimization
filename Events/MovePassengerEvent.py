@@ -27,9 +27,6 @@ class MovePassengerEvent(Event):
 
     def fire(self, environment: Environment) -> List[Event]:
 
-        # Remove the passenger from the sector
-        passenger = self.sector.remove(1)
-
         # Get the nearest sector with least people
         free_sector = self.__get_nearby_free_sector(environment)
 
@@ -43,30 +40,23 @@ class MovePassengerEvent(Event):
         # if the train is full, we return an empty list to prevent
         # the passenger from ending in an endless loop.
         if environment.train.is_full():
-            self.logger.warning("The train is full for passenger {}".format(passenger[0].id))
+            self.logger.warning("The train is full for passenger")
             return []
+
+        # Remove the passenger from the sector
+        passenger = self.sector.remove(1)
 
         # Add the passenger to the free sector
         free_sector.add(passenger)
 
         distance = abs(self.sector.sector_index - free_sector.sector_index)
         speed = compute_walking_speed(passenger[0], distance)
-        message = "Moved passenger from sector {} to sector {}".format(self.sector.sector_index, free_sector.sector_index)
+        message = "Moved passenger from sector {} to sector {}".format(self.sector.sector_index,
+                                                                       free_sector.sector_index)
         self.do_action(speed, message)
         # We return the load event so that passenger can get loaded
         from Events.LoadPassengerEvent import LoadPassengerEvent  # Inline/local import to prevent reference error
-        return [LoadPassengerEvent(free_sector, self.timestamp, self.configuration)]
-
-    def __is_train_full(self, environment: Environment) -> bool:
-        """
-        Check whether the train is full or not
-        """
-        train_sets = environment.train.train_sets
-        for t_set in train_sets:
-            # Check if any of the cars is not full
-            if any([c.is_full() for c in t_set.cars]):
-                return True
-        return False
+        return [LoadPassengerEvent(free_sector, 1, self.timestamp, self.configuration)]
 
     def __get_nearby_free_sector(self, environment: Environment) -> Optional[StationSector]:
         """
@@ -79,6 +69,7 @@ class MovePassengerEvent(Event):
             Return None in cases where we could not find a station sector. Should never be the case.
         """
         current_index = self.sector.sector_index
+        max_count = self.configuration.station_sector_passenger_max_count
         left_index = current_index - 1
         right_index = current_index + 1
 
@@ -95,10 +86,15 @@ class MovePassengerEvent(Event):
                 right_sector = environment.station.sectors[right_index]
 
             if left_sector is not None and right_sector is not None:
-                least_sector = left_sector if left_sector.amount < right_sector.amount else right_sector
-            elif left_sector is not None:
+                if left_sector.amount < max_count and right_sector.amount < max_count:
+                    least_sector = left_sector if left_sector.amount < right_sector.amount else right_sector
+                elif right_sector.amount < max_count:
+                    least_sector = right_sector
+                elif left_sector.amount < max_count:
+                    least_sector = left_sector
+            elif left_sector is not None and left_sector.amount < max_count:
                 least_sector = left_sector
-            elif right_sector is not None:
+            elif right_sector is not None and right_sector.amount < max_count:
                 least_sector = right_sector
             left_index += 1
             right_index += 1

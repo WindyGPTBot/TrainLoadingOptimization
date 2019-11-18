@@ -43,6 +43,12 @@ class ReceiveWeightEvent(Event):
 
         self.logger.info("Parked train at sector {}".format(environment.train.parked_at))
 
+        # To prevent the lights being set when there are no lights,
+        # then we just continue from here without creating the
+        # PassengerDecisionEvent as we would have otherwise.
+        if not self.configuration.station_have_lights:
+            return []
+
         for i in range(environment.train.train_car_length):
             index = environment.train.parked_at + i
             environment.station.sectors[index].train_car = environment.train[i]
@@ -74,7 +80,7 @@ class ReceiveWeightEvent(Event):
                 ReceiveWeightEvent.__set_light_status(sector.sector_index, LightStatus.RED, environment)
         return [
             PassengerDecisionEvent(
-                add_seconds(self.timestamp, 0),
+                self.timestamp,
                 self.train_arrive_time,
                 self.configuration
             )]

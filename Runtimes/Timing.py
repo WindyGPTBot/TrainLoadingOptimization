@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 
 class Timing:
@@ -7,8 +8,8 @@ class Timing:
     """
 
     def __init__(self):
-        self.__start_time: datetime = None
-        self.__stop_time: datetime = None
+        self.__start_time: Optional[datetime] = None
+        self.__stop_time: Optional[datetime] = None
 
     @property
     def turn_around_time(self) -> float:

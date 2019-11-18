@@ -64,7 +64,7 @@ class UnloadPassengerEvent(Event):
         # was last, then we start loading into the car. Else, we
         # just continue the unloading
         if self.train_car.amount == 0 or self.amount == 0:
-            return [LoadPassengerEvent(self.sector, self.timestamp, self.configuration)]
+            return [LoadPassengerEvent(self.sector, self.sector.amount, self.timestamp, self.configuration)]
         else:
             return [UnloadPassengerEvent(
                 self.train_car,

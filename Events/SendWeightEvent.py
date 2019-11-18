@@ -20,9 +20,14 @@ class SendWeightEvent(Event):
 
     def fire(self, environment: Environment) -> List[Event]:
         train_arrive_time = add_seconds(self.timestamp, compute_driving_time(self.configuration.station_distance))
+        signal_arrive_time = add_seconds(self.timestamp, self.configuration.time_receive_weight_event)
+
+        if train_arrive_time < signal_arrive_time:
+            raise RuntimeError("The weight signal is arriving after the train.")
+
         return [
             ReceiveWeightEvent(
-                add_seconds(self.timestamp, self.configuration.time_receive_weight_event),
+                signal_arrive_time,
                 train_arrive_time,
                 self.configuration
             ),

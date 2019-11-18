@@ -42,16 +42,6 @@ if __name__ == '__main__':
     logging.config.dictConfig(config)
 
     # Run the application
-    times = 5
-    turn_around_time = 1
-    for i in range(times):
-        with open('environment.pickle', 'rb') as f:
-            environment: Environment = pickle.load(f)
-        application = ApplicationRunTime(options, environment)
-        application.run()
-        turn_around_time += application.statistics()
-    print(turn_around_time / times)
 
-
-
-    #application.run()
+    application = ApplicationRunTime(options)
+    application.run()

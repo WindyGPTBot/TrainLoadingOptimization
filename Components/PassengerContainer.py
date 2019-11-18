@@ -91,3 +91,11 @@ class PassengerContainer:
             if passenger_to_remove is self.passengers[i]:
                 self.passengers.pop(i)
                 break
+
+    def empty(self) -> bool:
+        """
+        Get whether the PassengerContainer is empty
+        Returns:
+            True if empty, False if not
+        """
+        return self.amount == 0
