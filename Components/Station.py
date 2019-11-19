@@ -19,6 +19,7 @@ class Station(PopulatableComponent):
             configuration: The configuration to create the station with
         """
         self.__sectors = Station.__create_sectors(configuration)
+        self.__passenger_init = 0
         super().__init__(configuration)
 
     def __str__(self):
@@ -57,6 +58,7 @@ class Station(PopulatableComponent):
             total_waiting += amount
             self.logger.info("There are {} passengers waiting in sector {}".format(amount, sector.sector_index))
         self.logger.info("There in total {} passengers waiting on the station".format(total_waiting))
+        self.__passenger_init = total_waiting
 
     @property
     def sectors(self) -> List[StationSector]:
@@ -103,10 +105,11 @@ class Station(PopulatableComponent):
                 return False
         return True
 
-    @property
-    def amount_passengers(self) -> int:
+    def amount_passengers(self, follow_through=True) -> int:
         """
-        Get the total passengers in this train.
-        Returns: amount of passengers inside all sectors.
+        Get the amount of passengers in this object.
+        Args:
+            follow_through: If True, returns the passenger count after the simulator has run.
+        Returns: amount of passengers
         """
-        return sum([s.amount for s in self.sectors])
+        return sum([s.amount for s in self.sectors]) if follow_through else self.__passenger_init
