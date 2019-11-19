@@ -15,7 +15,7 @@ class MovePassengerEvent(Event):
     **Assumes that the train is parked.**
     """
 
-    def __init__(self, sector: StationSector, timestamp: datetime, configuration: Configuration):
+    def __init__(self, sector: StationSector, amount: int, timestamp: datetime, configuration: Configuration):
         """
         Initialize a new Move Passenger Event
         Args:
@@ -24,9 +24,14 @@ class MovePassengerEvent(Event):
             configuration: The simulation configuration
         """
         self.sector = sector
+        self.amount = amount
         super().__init__(timestamp, configuration)
 
     def fire(self, environment: Environment) -> List[Event]:
+
+        if self.amount == 0:
+            self.logger.warning("Amount was zero for sector {}.".format(self.sector.sector_index))
+            return []
 
         # Get the nearest sector with least people
         free_sector = self.__get_nearby_free_sector(environment)
@@ -37,29 +42,16 @@ class MovePassengerEvent(Event):
                 "We could not find a free sector for passenger, and the train is not full. "
                 "Should never have happened.")
 
-        # To stop the passenger from running around the station
-        # if the train is full, we return an empty list to prevent
-        # the passenger from ending in an endless loop.
-        if environment.train.is_full():
-            self.logger.warning("The train is full for passenger")
-            return []
-        if self.sector.empty():
-            self.logger.warning("The sector is empty")
-            return []
-        # Remove the passenger from the sector
-        passenger = self.sector.remove(1)
+        walking_distance = sector_distance(self.sector, free_sector)
+        removed_passengers = self.sector.remove(self.amount)
+        amount_removed = len(removed_passengers)
+        speed = compute_walking_speed(removed_passengers[0], walking_distance)
 
-        # Add the passenger to the free sector
-        free_sector.add(passenger)
-
-        distance = abs(self.sector.sector_index - free_sector.sector_index)
-        speed = compute_walking_speed(passenger[0], distance)
-        message = "Moved passenger from sector {} to sector {}".format(self.sector.sector_index,
-                                                                       free_sector.sector_index)
-        self.do_action(speed, message)
-        # We return the load event so that passenger can get loaded
-        from Events.LoadPassengerEvent import LoadPassengerEvent  # Inline/local import to prevent reference error
-        return [LoadPassengerEvent(free_sector, free_sector.amount, self.timestamp, self.configuration)]
+        self.do_action(speed, "Moved {} passengers from sector {} to {}".format(amount_removed,
+                                                                                self.sector.sector_index,
+                                                                                free_sector.sector_index))
+        from Events.LoadPassengerEvent import LoadPassengerEvent
+        return [LoadPassengerEvent(free_sector, amount_removed, self.timestamp, self.configuration)]
 
     def __get_nearby_free_sector(self, environment: Environment) -> Optional[StationSector]:
         """

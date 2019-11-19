@@ -1,10 +1,8 @@
 import json
 import logging.config
-import pickle
 
 from Distributions.NormalDistribution import NormalDistribution
 from Runtimes.ApplicationRuntime import ApplicationRunTime
-from Runtimes.Environment import Environment
 
 options: dict = {
     "passenger_weight_distribution": NormalDistribution(80, 10),
@@ -15,15 +13,15 @@ options: dict = {
     "passenger_max_walk_range": range(4, 4),
     "passenger_compliance": 1,
     "train_capacity": 75,
-    "train_fullness": range(30, 60),
-    "train_unload_percent": range(10, 50),
+    "train_fullness": range(60, 80),
+    "train_unload_percent": range(50, 70),
     "train_set_setup": 4,
     "train_amount_of_sets": 2,
     "train_park_at_index": 8,
     "station_sector_count": 16,
     "station_distance": 3.0,
     "station_stairs_placement": [3],
-    "station_sector_passenger_max_count": 25,
+    "station_sector_passenger_max_count": 40,
     "station_sector_fullness": range(50, 80),
     "station_stair_factor": 1.5,
     "station_light_thresholds": {"green": .5, "yellow": .75},
@@ -42,15 +40,15 @@ with_options: dict = {
     "passenger_max_walk_range": range(4, 4),
     "passenger_compliance": 1,
     "train_capacity": 75,
-    "train_fullness": range(30, 60),
-    "train_unload_percent": range(10, 50),
+    "train_fullness": range(40, 60),
+    "train_unload_percent": range(50, 70),
     "train_set_setup": 4,
     "train_amount_of_sets": 2,
     "train_park_at_index": 8,
     "station_sector_count": 16,
     "station_distance": 3.0,
     "station_stairs_placement": [3],
-    "station_sector_passenger_max_count": 25,
+    "station_sector_passenger_max_count": 40,
     "station_sector_fullness": range(50, 80),
     "station_stair_factor": 1.5,
     "station_light_thresholds": {"green": .5, "yellow": .75},
@@ -69,5 +67,20 @@ if __name__ == '__main__':
     logging.config.dictConfig(config)
 
     # Run the application
-    application = ApplicationRunTime(options)
-    application.run()
+    with_mean = 0
+    without_mean = 0
+
+    times = 50
+
+    for i in range(times):
+        application = ApplicationRunTime(options)
+        application.run()
+        without_mean += application.statistics()
+    for i in range(times):
+        application = ApplicationRunTime(with_options)
+        application.run()
+        with_mean += application.statistics()
+
+    print("With: {}, without: {}".format(with_mean/times, without_mean/times))
+
+

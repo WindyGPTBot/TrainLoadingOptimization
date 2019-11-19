@@ -41,27 +41,12 @@ class TrainArriveEvent(Event):
         # parallelize each section. This means all cars can start
         # load and unload each car for it self.
         for sector in environment.station.sectors:
-            # If the sector has a train car parked, and there are
-            # passengers who wants to leave, then we can start
-            # unloading. If no passengers are leaving, then we
-            # start loading the train car with passengers.
             if sector.has_train_car():
                 amount_leaving = passengers_leaving_amount[sector.sector_index]
-                if amount_leaving > 0:
-                    events.append(UnloadPassengerEvent(sector.train_car,
-                                                       sector,
-                                                       amount_leaving,
-                                                       self.timestamp,
-                                                       self.configuration))
-                else:
-                    events.append(LoadPassengerEvent(sector, sector.amount, self.timestamp, self.configuration))
+                events.append(
+                    UnloadPassengerEvent(sector.train_car, sector, amount_leaving, self.timestamp, self.configuration))
             else:
-                # If no train is parked then we must spawn a move passenger
-                # event for each passenger in that sector, so that they can
-                # move to a sector where there is a train parked.
-                for i in range(sector.amount):
-                    events.append(MovePassengerEvent(sector, self.timestamp, self.configuration))
-
+                events.append(MovePassengerEvent(sector, sector.amount, self.timestamp, self.configuration))
         return events
 
     def __decide_unloading_count(self, environment: Environment) -> Dict[int, int]:
