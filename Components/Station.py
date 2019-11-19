@@ -99,7 +99,7 @@ class Station(PopulatableComponent):
             True if the station is empty, False if there is > 0 passengers in any sector.
         """
         for s in self.sectors:
-            if len(s.passengers) > 0:
+            if not s.empty():
                 return False
         return True
 

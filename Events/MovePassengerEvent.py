@@ -43,7 +43,9 @@ class MovePassengerEvent(Event):
         if environment.train.is_full():
             self.logger.warning("The train is full for passenger")
             return []
-
+        if self.sector.empty():
+            self.logger.warning("The sector is empty")
+            return []
         # Remove the passenger from the sector
         passenger = self.sector.remove(1)
 
@@ -75,5 +77,9 @@ class MovePassengerEvent(Event):
             if sector.has_train_car() and not sector.train_car.is_full():
                 dist = sector_distance(self.sector, sector)
                 if dist < least_distance and dist != 0:
-                    least_sector = sector
+                    if dist == least_distance:
+                        least_sector = least_sector if least_sector.amount <= sector.amount else sector
+                    else:
+                        least_sector = sector
+                        least_distance = dist
         return least_sector

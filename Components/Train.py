@@ -152,9 +152,13 @@ class Train(PopulatableComponent):
         Raises:
             IndexError: Thrown if you provide an invalid index
         """
-        set_index = int(item / self.configuration.train_set_setup % self.configuration.train_set_setup)
-        car_index = item % self.configuration.train_set_setup
-        return self.train_sets[set_index - 1].cars[car_index]
+        i = 0
+        for train_set in self.train_sets:
+            for train_car in train_set.cars:
+                if i == item:
+                    return train_car
+                i += 1
+        raise IndexError('Could not find a train car with index {}'.format(item))
 
     @staticmethod
     def __create_train_sets(configuration: Configuration) -> List[TrainSet]:
