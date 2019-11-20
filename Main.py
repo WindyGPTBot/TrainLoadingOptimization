@@ -34,34 +34,44 @@ options: dict = {
     "environment_random_seed": None
 }
 
-def start_simulation(verbose=False, plot=False):
+def start_simulation(silence=False, plot=False):
     # Create the logger configuration from the json file
     with open('logging.json', 'rt') as f:
         config = json.load(f)
     logging.config.dictConfig(config)
 
     # Toggles logging
-    logging.disable() if not verbose else None
+    logging.disable() if silence else None
 
     # Stores the simulation samples
+    changes = {
+        'time_send_weight_event': [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+    }
     samples = []
 
-    for i in range(1,30):  # Amount of simulations
-        print('Running simulation #', i)
-        application = ApplicationRunTime(options)
-        application.run()
-        samples.append(application)
+    print("Running simulation...")
+    for key, values in changes.items():
+        for value in values:
+            options[key] = value
+            application = ApplicationRunTime(options)
+            application.run()
+            samples.append(application)
+
+    print("Simulations finished.")
 
     if plot:
+        print("Plotting graph...")
         s_graph = SimpleGraph(
             samples,
             # Values in X
-            x_param='environment.station.initial_passenger_amount',
+            x_param='configuration.time_send_weight_event',
             # Values in Y
             y_param='environment.timings.turn_around_time',
             # Different plots if this value changes under the simulation (or before=
             comparison_param='configuration.station_have_lights')
         s_graph.draw()
+
+    print("Finished!")
 
 
 def introduction():
@@ -101,24 +111,25 @@ def usage():
     introduction()
     instructions = """
     Usage:
-             -v, --verbose  Toggles logging
+             -s, --silence  Toggles logging
+             -p, --plot-graph  Draw a graph with the simulation result
     """
     print(instructions)
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], ":hvp", ["help"])
+        opts, args = getopt.getopt(sys.argv[1:], ":hsp", ["help"])
     except getopt.GetoptError as err:
         print(err)
         usage()
         sys.exit(2)
 
-    verbose = False
+    silence = False
     plot_graph = False
 
     for o, a in opts:
-        if o in ("-v", "--verbose"):
-            verbose = True
+        if o in ("-s", "--silence"):
+            silence = True
         elif o in ("-p", "--plot-graph"):
             plot_graph = True
         elif o in ("-h", "--help"):
@@ -129,7 +140,7 @@ def main():
 
     ## Starts simulation
     introduction()
-    start_simulation(verbose, plot_graph)
+    start_simulation(silence, plot_graph)
     sys.exit()
 
 if __name__ == "__main__":
