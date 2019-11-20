@@ -63,44 +63,45 @@ def start_simulation(verbose=False):
     s_graph.draw()
 
 
-INTRODUCTION_GRAPHICS_1 = """
-###############################################################
-##                                                           ##
-##              TECHNICAL UNIVERSITY OF DENMARK              ##
-##                                                           ##
-##                     SIMULATION OF                         ##
-## OPTIMIZATION DEVICE FOR PASSENGER LOADING IN TRAIN WAGONS ##
-##          02223 - MODEL BASED SYSTEMS ENGINEERING          ##
-##                                                           ##
-##              LAURA GRÜNAUER & S191883                     ##
-##              THOMAS MADSEN & S154174                      ##
-##              ELVIS  CAMILO & S190395                      ##
-##              DAVID SØRENSEN & S182862                     ##
-##                                                           ##
-###############################################################
-"""
+def introduction():
+    PRESENTATION = """
+    ###############################################################
+    ##                                                           ##
+    ##              TECHNICAL UNIVERSITY OF DENMARK              ##
+    ##                                                           ##
+    ##                     SIMULATION OF                         ##
+    ## OPTIMIZATION DEVICE FOR PASSENGER LOADING IN TRAIN WAGONS ##
+    ##          02223 - MODEL BASED SYSTEMS ENGINEERING          ##
+    ##                                                           ##
+    ##              LAURA GRÜNAUER & S191883                     ##
+    ##              THOMAS MADSEN & S154174                      ##
+    ##              ELVIS  CAMILO & S190395                      ##
+    ##              DAVID SØRENSEN & S182862                     ##
+    ##                                                           ##
+    ###############################################################
+    """
 
-# Credits https://www.asciiart.eu/vehicles/trains
-TRAIN_GRAPHICS_1 = """
-___________   _______________________________________^__.
- ___   ___ |||  ___   ___   ___    ___ ___  |   __  ,____|
-|   | |   |||| |   | |   | |   |  |   |   | |  |  | |_____|
-|___| |___|||| |___| |___| |___|  | O | O | |  |  |        )
-           |||                    |___|___| |  |__|         )
-___________|||______D_S_B___________________|______________/
-           |||                                        /---------
------------'''---------------------------------------'
-################################################################
-"""
+    # Credits https://www.asciiart.eu/vehicles/trains
+    TRAIN = """
+    ___________   _______________________________________^__.
+     ___   ___ |||  ___   ___   ___    ___ ___  |   __  ,____|
+    |   | |   |||| |   | |   | |   |  |   |   | |  |  | |_____|
+    |___| |___|||| |___| |___| |___|  | O | O | |  |  |        )
+               |||                    |___|___| |  |__|         )
+    ___________|||______D_S_B___________________|______________/
+               |||                                        /---------
+    -----------'''---------------------------------------'
+    ################################################################
+    """
 
+    print('{}{}'.format(PRESENTATION, TRAIN))
 
 def usage():
+    introduction()
     instructions = """
     Usage:
              -v, --verbose  Toggles logging
     """
-    print(INTRODUCTION_GRAPHICS_1)
-    print(TRAIN_GRAPHICS_1)
     print(instructions)
 
 def main():
@@ -122,6 +123,7 @@ def main():
             assert False, "unhandled option"
 
     ## Starts simulation
+    introduction()
     start_simulation(verbose)
 
 if __name__ == "__main__":
