@@ -49,12 +49,12 @@ class TestPrepareTrainEvent(unittest.TestCase):
         self.runtime = ApplicationRuntime.ApplicationRunTime(self.options)
 
         self.assertTrue(
-            self.runtime.environment.station.amount_passengers == 12,
-            self.runtime.environment.train.amount_passengers == 20
+            self.runtime.environment.station.initial_passenger_amount == 12,
+            self.runtime.environment.train.initial_passenger_amount == 20
         )
         self.runtime.run()
         # Amount of passengers in each instance must have been switched
         self.assertTrue(
-            self.runtime.environment.station.amount_passengers == 20,
-            self.runtime.environment.train.amount_passengers == 12
+            self.runtime.environment.station.initial_passenger_amount == 20,
+            self.runtime.environment.train.initial_passenger_amount == 12
         )

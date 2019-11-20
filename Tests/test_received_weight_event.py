@@ -74,7 +74,6 @@ class TestReceivedWeightEvent(unittest.TestCase):
         # All sectors must have the same max amount of passengers every time the test runs
         for sector in sectors:
             self.assertEqual(expected_passengers[sector.sector_index], sector.amount)
-        print("Number of passengers at a stair section is always the maximum capacity of passengers")
 
     def tearDown(self) -> None:
         pass
