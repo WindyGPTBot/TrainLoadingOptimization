@@ -14,16 +14,16 @@ options: dict = {
     "passenger_regular_size": 0.5,
     "passenger_max_walk_range": range(4, 4),
     "passenger_compliance": 1,
-    "train_capacity": 75,
+    "train_capacity": 100,
     "train_fullness": range(30, 60),
-    "train_unload_percent": range(10, 50),
+    "train_unload_percent": range(100, 100),
     "train_set_setup": 4,
     "train_amount_of_sets": 2,
     "train_park_at_index": 8,
     "station_sector_count": 16,
     "station_distance": 3.0,
     "station_stairs_placement": [3],
-    "station_sector_passenger_max_count": 25,
+    "station_sector_passenger_max_count": 100,
     "station_sector_fullness": range(50, 80),
     "station_stair_factor": 1.5,
     "station_light_thresholds": {"green": .5, "yellow": .75},
@@ -31,7 +31,7 @@ options: dict = {
     "time_send_weight_event": 0,
     "time_receive_weight_event": 0,
     "time_door_action": 4,
-    "environment_random_seed": None
+    "environment_random_seed": 30
 }
 
 def start_simulation(silence=False, plot=False):
@@ -44,18 +44,26 @@ def start_simulation(silence=False, plot=False):
     logging.disable() if silence else None
 
     # Stores the simulation samples
+    plots = {
+        'station_have_lights': [True, False]
+    }
+
     changes = {
-        'time_send_weight_event': [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+        'station_sector_passenger_max_count': [10, 20,30,40,50,60,70,80,90,100,200,300],
     }
     samples = []
 
     print("Running simulation...")
-    for key, values in changes.items():
-        for value in values:
-            options[key] = value
-            application = ApplicationRunTime(options)
-            application.run()
-            samples.append(application)
+
+    for k, vls in plots.items():
+        for v in vls:
+            for key, values in changes.items():
+                for value in values:
+                    options[key] = value
+                    options[k] = v
+                    application = ApplicationRunTime(options)
+                    application.run()
+                    samples.append(application)
 
     print("Simulations finished.")
 
@@ -64,7 +72,7 @@ def start_simulation(silence=False, plot=False):
         s_graph = SimpleGraph(
             samples,
             # Values in X
-            x_param='configuration.time_send_weight_event',
+            x_param='environment.station.initial_passenger_amount',
             # Values in Y
             y_param='environment.timings.turn_around_time',
             # Different plots if this value changes under the simulation (or before=
@@ -89,6 +97,7 @@ def introduction():
     ##              ELVIS  CAMILO & S190395                      ##
     ##              DAVID SØRENSEN & S182862                     ##
     ##                                                           ##
+    ##                    NOVEMBER 2019                          ##
     ###############################################################
     """
 
