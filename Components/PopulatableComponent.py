@@ -25,13 +25,19 @@ class PopulatableComponent(Component):
         """
         raise NotImplementedError("Populate method not implemented in " + self.__class__.__name__)
 
-    @abstractmethod
-    def amount_passengers(self, follow_through=True) -> int:
+    @property
+    def initial_passenger_amount(self) -> int:
         """
-        Get the amount of passengers in this object.
-        Args:
-            follow_through: If True, returns the passenger count after the simulator has run.
+        Get the amount of passengers in this object before the simulation finishes.
         Returns: amount of passengers
         """
-        raise NotImplementedError("Populate method not implemented in " + self.__class__.__name__)
+        raise NotImplementedError("Method not implemented in " + self.__class__.__name__)
+
+    @property
+    def final_passenger_amount(self) -> int:
+        """
+        Get the amount of passengers in this object after the simulation is finished.
+        Returns: amount of passengers
+        """
+        raise NotImplementedError("Method not implemented in " + self.__class__.__name__)
 

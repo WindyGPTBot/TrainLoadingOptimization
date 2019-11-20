@@ -177,11 +177,18 @@ class Train(PopulatableComponent):
             sets.append(TrainSet(i, configuration))
         return sets
 
-    def amount_passengers(self, follow_through=True) -> int:
+    @property
+    def initial_passenger_amount(self) -> int:
         """
-        Get the amount of passengers in this object.
-        Args:
-            follow_through: If True, returns the passenger count after the simulator has run.
+        Get the amount of passengers in this object before the simulation finishes.
         Returns: amount of passengers
         """
-        return sum([car.amount for t_set in self.train_sets for car in t_set.cars]) if follow_through else self.__passenger_init
+        return self.__passenger_init
+
+    @property
+    def final_passenger_amount(self) -> int:
+        """
+        Get the amount of passengers in this object after the simulation is finished.
+        Returns: amount of passengers
+        """
+        return sum([car.amount for t_set in self.train_sets for car in t_set.cars])

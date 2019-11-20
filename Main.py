@@ -1,3 +1,4 @@
+import sys, getopt
 import json
 import logging.config
 
@@ -25,38 +26,103 @@ options: dict = {
     "station_sector_fullness": range(50, 80),
     "station_stair_factor": 1.5,
     "station_light_thresholds": {"green": .5, "yellow": .75},
-    "station_have_lights": True,
+    "station_have_lights": False,
     "time_send_weight_event": 0,
     "time_receive_weight_event": 0,
     "time_door_action": 4,
-    "environment_random_seed": 30,
+    "environment_random_seed": None
 }
 
-if __name__ == '__main__':
-
+def start_simulation(verbose=False):
     # Create the logger configuration from the json file
     with open('logging.json', 'rt') as f:
         config = json.load(f)
     logging.config.dictConfig(config)
-    #@TODO remove
-    logging.disable()
 
-    # Run the application
-    changes = {'time_send_weight_event': [0, 1, 2]}
+    # Toggles logging
+    logging.disable() if not verbose else None
 
+    # Stores the simulation samples
     samples = []
 
-    for i in range(20,60):
-        for key, values in changes.items():
-            for value in values:
-                opt = options
-                print(options)
-                opt[key] = value
-                print(opt)
-                application = ApplicationRunTime(opt)
-                application.run()
-                samples.append(application)
+    for i in range(1,30):  # Amount of simulations
+        print('Running simulation #', i)
+        application = ApplicationRunTime(options)
+        application.run()
+        samples.append(application)
 
     from Helpers.Graph.Graph import SimpleGraph
-    s_graph = SimpleGraph(samples, comparison_parameter='time_send_weight_event')
+    s_graph = SimpleGraph(
+        samples,
+        # Values in X
+        x_param='environment.station.initial_passenger_amount',
+        # Values in Y
+        y_param='environment.timings.turn_around_time',
+        # Different plots if this value changes under the simulation (or before=
+        comparison_param='configuration.station_have_lights')
     s_graph.draw()
+
+
+INTRODUCTION_GRAPHICS_1 = """
+###############################################################
+##                                                           ##
+##              TECHNICAL UNIVERSITY OF DENMARK              ##
+##                                                           ##
+##                     SIMULATION OF                         ##
+## OPTIMIZATION DEVICE FOR PASSENGER LOADING IN TRAIN WAGONS ##
+##          02223 - MODEL BASED SYSTEMS ENGINEERING          ##
+##                                                           ##
+##              LAURA GRÜNAUER & S191883                     ##
+##              THOMAS MADSEN & S154174                      ##
+##              ELVIS  CAMILO & S190395                      ##
+##              DAVID SØRENSEN & S182862                     ##
+##                                                           ##
+###############################################################
+"""
+
+# Credits https://www.asciiart.eu/vehicles/trains
+TRAIN_GRAPHICS_1 = """
+___________   _______________________________________^__.
+ ___   ___ |||  ___   ___   ___    ___ ___  |   __  ,____|
+|   | |   |||| |   | |   | |   |  |   |   | |  |  | |_____|
+|___| |___|||| |___| |___| |___|  | O | O | |  |  |        )
+           |||                    |___|___| |  |__|         )
+___________|||______D_S_B___________________|______________/
+           |||                                        /---------
+-----------'''---------------------------------------'
+################################################################
+"""
+
+
+def usage():
+    instructions = """
+    Usage:
+             -v, --verbose  Toggles logging
+    """
+    print(INTRODUCTION_GRAPHICS_1)
+    print(TRAIN_GRAPHICS_1)
+    print(instructions)
+
+def main():
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], ":hv", ["help"])
+    except getopt.GetoptError as err:
+        print(err)
+        usage()
+        sys.exit(2)
+    verbose = False
+
+    for o, a in opts:
+        if o in ("-v", "--verbose"):
+            verbose = True
+        elif o in ("-h", "--help"):
+            usage()
+            sys.exit()
+        else:
+            assert False, "unhandled option"
+
+    ## Starts simulation
+    start_simulation(verbose)
+
+if __name__ == "__main__":
+    main()

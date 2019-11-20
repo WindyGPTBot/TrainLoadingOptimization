@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from Runtimes.ApplicationRuntime import ApplicationRunTime
 from typing import List
+from Helpers.Object import get_deep_attr, has_deep_attr
+from datetime import datetime
 
 try:
     import matplotlib.pyplot as plt
@@ -9,16 +11,29 @@ except ImportError as e:
     raise BaseException('matplotlib could not be imported. Make sure it is properly installed. %s' % e)
 
 class Graph(ABC):
-    def __init__(self, runtime : List[ApplicationRunTime], comparison_parameter : str, *args, **kwargs):
+    def __init__(
+            self,
+            samples : List[ApplicationRunTime],
+            x_param : str,
+            y_param : str,
+            comparison_param : str,
+            *args,
+            **kwargs
+    ):
         """
-        Initializes a class to plot graphs based on the passed runtime.
+
         Args:
-            runtime: the runtime object
+            samples: Runtime samples
+            x_param: Attribute to be extracted from runtime, i.e: runtime.environment.train.arrival_time
+            y_param: Attribute to be extracted from runtime, i.e: runtime.environment.train.arrival_time
+            comparison_param: Attribute to be extracted from runtime, i.e: runtime.environment.train.arrival_time
             *args:
-            **kwargs: file_Format, file_name, title
+            **kwargs:
         """
-        self.runtime = runtime
-        self.comparison_parameter = comparison_parameter
+        self.samples = samples
+        self.comparison_param = comparison_param
+        self.y_param = y_param
+        self.x_param = x_param
 
         # Optional arguments
         self.file_format = kwargs.get('file_format', 'svg').replace('.', '')
@@ -26,55 +41,91 @@ class Graph(ABC):
         self.title = kwargs.get('title', 'Result')
 
         # ...
-        self.x_axis = kwargs.get('x_axis', [])
-        self.y_axis = {}
+        self.axes = {}
 
     @abstractmethod
-    def build_data(self) -> None:
+    def compile_data(self) -> None:
         """
         Arranges the data to plot the graph.
         """
-        raise NotImplementedError("method not implemented in {}".format(self.__class__.__name__))
+        raise NotImplementedError("Method not implemented in {}".format(self.__class__.__name__))
 
     @abstractmethod
     def draw(self) -> None:
         """
         Plots the graph and saves it to a file.
         """
-        raise NotImplementedError("method not implemented in {}".format(self.__class__.__name__))
+        raise NotImplementedError("Method not implemented in {}".format(self.__class__.__name__))
 
 
 class SimpleGraph(Graph):
-    def build_data(self):
+    def compile_data(self) -> None:
+        """
+        Prepares the data to be graphed.
+        """
 
-        for i, r in enumerate(self.runtime):
-            # Adds this value to the corresponding key
-            key = getattr(r.environment.configuration, self.comparison_parameter)
-            value = r.environment.timings.turn_around_time
+        for i, r in enumerate(self.samples):
+            # Get the parameters from the objects
+
+            if has_deep_attr(r, self.y_param):
+                y_value = get_deep_attr(r, self.y_param)
+            else:
+                raise Exception('y_param attribute does not exist.')
+
+            if has_deep_attr(r, self.x_param):
+                x_value = get_deep_attr(r, self.x_param)
+            else:
+                raise Exception('x_param attribute does not exist.')
+
+            if has_deep_attr(r, self.comparison_param):
+                comparison_value = get_deep_attr(r, self.comparison_param)
+            else:
+                raise Exception('comparison_value attribute does not exist.')
+
+            # If comparison values have different values across all simulations,
+            # two graphs will be plotted together. That is why we have a list of axes (x, y), one
+            # for each dictionary key.
+
+            # Name for the key in the dictionary
+            key = '%s=%s' % (self.comparison_param, comparison_value)
 
             try:
-                self.y_axis[key].append(value)
-            except KeyError:
-                self.y_axis[key] = []
-                self.y_axis[key].append(value)
+                # Append to the X and Y axes for this parameter
 
-        # Since the X axis has to be the same for all Y axis, we make sure to sample only once, as this list grows
-        # linearly with the different amount of parameters n*m
-        for i, r in enumerate(self.runtime):
-            self.x_axis.append(
-                r.environment.station.amount_passengers(follow_through=False)
-            ) if not (i % len(self.y_axis) and self.x_axis) else None
+                # Keys do exist
+                self.axes[key][0].append(x_value)
+                self.axes[key][1].append(y_value)
+            except KeyError:
+                # Keys do not exist
+                self.axes[key] = [[x_value], [y_value]]
 
     def draw(self):
-        self.build_data()
-        for key, items in self.y_axis.items():
-            plt.plot(self.x_axis, items, label='%s=%s' % (self.comparison_parameter, key))
+        """
+        Plots graph.
+        """
+        # Gets the data
+        self.compile_data()
 
-        plt.xlabel('passengers on platform')
-        plt.ylabel('turn around time')
+        # For each comparison parameter, we get the axis Y and X
+        for key, v_axes in self.axes.items():
+            # Sorting the values in asc order
+            v_axes[0].sort(), v_axes[1].sort()
+            # Plots
+            plt.plot(v_axes[0], v_axes[1], label=key)
+
+        # Naming the axes
+        plt.xlabel(self.x_param)
+        plt.ylabel(self.y_param)
 
         plt.title(self.title)
         plt.legend()
         plt.grid(True)
-        plt.savefig('%s.%s' % (self.file_name, self.file_format))
+
+        # Unique name for the figure
+        _stamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        plt.savefig('%s-%s.%s' % (
+            self.file_name,
+            _stamp,
+            self.file_format
+        ))
         plt.show()
