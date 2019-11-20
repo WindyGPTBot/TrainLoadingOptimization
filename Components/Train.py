@@ -22,6 +22,7 @@ class Train(PopulatableComponent):
         self.__parked_at = None
         self.__weight = 0
         self.__train_length = None
+        self.__passenger_init = 0
         super().__init__(configuration)
 
     def __str__(self):
@@ -133,12 +134,15 @@ class Train(PopulatableComponent):
         """
         rang = self.configuration.train_fullness  # Let us get the range of how full we want our train cars
         cap = self.configuration.train_capacity  # Then we get the max capacity
+        t_amount = 0
         for train_set in self.train_sets:
             for car in train_set.cars:
                 # Then we generate a random percentage of the maximum capacity
                 # and then fill the train car with that random amount
                 amount = floor(random_between_percentage(self.configuration.environment_random_seed, rang, cap))
                 car.add(amount, self.configuration)
+                t_amount += amount
+        self.__passenger_init = t_amount
 
     def __getitem__(self, item: int) -> TrainCar:
         """
@@ -174,9 +178,17 @@ class Train(PopulatableComponent):
         return sets
 
     @property
-    def amount_passengers(self) -> int:
+    def initial_passenger_amount(self) -> int:
         """
-        Get the total passengers in this train.
-        Returns: a sum of all passengers inside cars inside all train set.
+        Get the amount of passengers in this object before the simulation finishes.
+        Returns: amount of passengers
+        """
+        return self.__passenger_init
+
+    @property
+    def final_passenger_amount(self) -> int:
+        """
+        Get the amount of passengers in this object after the simulation is finished.
+        Returns: amount of passengers
         """
         return sum([car.amount for t_set in self.train_sets for car in t_set.cars])
