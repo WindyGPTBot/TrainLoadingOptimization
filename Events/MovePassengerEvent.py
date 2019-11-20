@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from Components.StationSector import StationSector
 from Events.Event import Event
+from Events.PrepareTrainEvent import PrepareTrainEvent
 from Helpers.Distances import sector_distance
 from Helpers.Speed import compute_walking_speed
 from Runtimes.Configuration import Configuration
@@ -42,14 +43,25 @@ class MovePassengerEvent(Event):
                 "We could not find a free sector for passenger, and the train is not full. "
                 "Should never have happened.")
 
+        # Compute the walking distance
         walking_distance = sector_distance(self.sector, free_sector)
+        # Now, remove the passenger from the current sector
         removed_passengers = self.sector.remove(self.amount)
+        # For ease of use later, let's record how many we removed
         amount_removed = len(removed_passengers)
-        speed = compute_walking_speed(removed_passengers[0], walking_distance)
+        try:
+            # Compute how long it takes to walk that distance
+            speed = compute_walking_speed(removed_passengers[0], walking_distance)
+            # Now perform the action
+            self.do_action(speed, "Moved {} passengers from sector {} to {}".format(amount_removed,
+                                                                                    self.sector.sector_index,
+                                                                                    free_sector.sector_index))
+        except IndexError:
+            self.logger.warning("We removed zero passengers during move in sector {} with {} passengers".format(
+                self.sector.sector_index, self.sector.amount))
+        # Actually move the passengers
+        free_sector.add(removed_passengers)
 
-        self.do_action(speed, "Moved {} passengers from sector {} to {}".format(amount_removed,
-                                                                                self.sector.sector_index,
-                                                                                free_sector.sector_index))
         from Events.LoadPassengerEvent import LoadPassengerEvent
         return [LoadPassengerEvent(free_sector, amount_removed, self.timestamp, self.configuration)]
 

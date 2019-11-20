@@ -151,6 +151,10 @@ class Configuration:
         """
         return self.__options['station_have_lights']
 
+    @station_have_lights.setter
+    def station_have_lights(self, have_lights: bool):
+        self.__options['station_have_lights'] = have_lights
+
     @property
     def train_fullness(self) -> range:
         """
@@ -161,7 +165,7 @@ class Configuration:
         return self.__options['train_fullness']
 
     @property
-    def train_unload_percent(self) -> range:
+    def train_unload_percent(self) -> Union[range, List[int]]:
         """
         Get a range of percentages for how much each car should unload at the station.
         Returns: A range object between 0 and 100 with how much each car should be unloaded.

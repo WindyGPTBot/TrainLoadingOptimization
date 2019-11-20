@@ -4,6 +4,7 @@ from Runtimes.Configuration import Configuration
 from Runtimes.Environment import Environment
 from Runtimes.EventRunTime import EventRunTime
 from Runtimes.RunTime import RunTime
+import Helpers.Pickle as p
 
 
 class ApplicationRunTime(RunTime):
@@ -20,9 +21,23 @@ class ApplicationRunTime(RunTime):
         self.environment = Environment(self.configuration) if environment is None else environment
 
     def run(self) -> None:
-        # Run the events x times
-        event_runtime = EventRunTime(self.configuration, self.environment)
-        event_runtime.run()
+        name = 'environment.pickle'
+        p.save(name, self.environment)
 
-    def statistics(self) -> float:
-        return self.environment.timings.turn_around_time
+        self.configuration.station_have_lights = False
+
+        tas = {'with': 0, 'without': 0}
+
+        # Run the events x times
+        event_runtime = EventRunTime(self.configuration, p.read(name))
+        event_runtime.run()
+        tas['without'] += event_runtime.environment.timings.turn_around_time
+
+        self.configuration.station_have_lights = True
+
+        # Run the events x times
+        event_runtime = EventRunTime(self.configuration, p.read(name))
+        event_runtime.run()
+        tas['with'] += event_runtime.environment.timings.turn_around_time
+
+        print('with: {}, without: {}'.format(tas['with'], tas['without']))

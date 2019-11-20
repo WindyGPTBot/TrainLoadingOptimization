@@ -66,7 +66,8 @@ class SectorDistance:
             The StationSector with the status within the distance
         """
         for i in range(int(distance)):
-            if i <= distance and i in self.__matrix:
+            if i <= distance and i in self.__matrix and status in self.__matrix[i] and len(
+                    self.__matrix[i][status]) > 0:
                 if not with_least:
                     return self.__matrix[i][status][0]
                 least = self.__matrix[i][status][0]
@@ -74,6 +75,33 @@ class SectorDistance:
                     if sector.amount < least.amount:
                         least = sector
                 return least
+
+    def get_sectors_within_distance(self, distance: int, status: LightStatus) -> List[StationSector]:
+        """
+        Get sectors within the provided distance that has the provided light status
+        Args:
+            distance: The distance to get sectors within
+            status: The status that the lights should have
+        Returns:
+            A list with sectors that are within reach with the status
+        """
+        # Python is strange, so let us just be sure it is an int
+        if not isinstance(distance, int):
+            distance = int(distance)
+
+        # List of the station sectors that will be returned
+        sectors: List[StationSector] = []
+
+        # Iterative, we will loop through all the different
+        # distances and see if we can get sectors with the
+        # correct light status, and if we can then we add
+        # the sectors to the sectors list above.
+        for i in range(distance):
+            if i > distance:
+                break
+            if i in self.__matrix and status in self.__matrix[i]:
+                sectors.extend(self.__matrix[i][status])
+        return sectors
 
     def __compute(self) -> None:
         """

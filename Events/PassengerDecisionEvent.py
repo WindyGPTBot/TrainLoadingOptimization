@@ -5,7 +5,7 @@ from Components.LightStatus import LightStatus
 from Components.StationSector import StationSector
 from Events.Event import Event
 from Helpers.Distances import sector_distance
-from Helpers.Ranges import random_between_range
+from Helpers.Ranges import random_between_range, random_choice
 from Helpers.SectorDistance import SectorDistance
 from Runtimes import Configuration
 from Runtimes.Environment import Environment
@@ -40,61 +40,34 @@ class PassengerDecisionEvent(Event):
         return []
 
     def __handle_none_light(self, matrix: SectorDistance, sector: StationSector, environment: Environment) -> None:
-        amount_to_move = sector.amount
-        amount_moved = 0
-        moved_to = None
+
         for i in range(sector.amount):
+            # Remove the passenger from the current sector
             passenger = sector.remove(1)[0]
+            # Compute the distance they are able to walk
             able_distance = self.__time_to_move / passenger.speed
+            # Get how far the passenger is willing to walk
+            willing_distance = passenger.max_walk
+            # If the passenger is not willing to walk as far
+            # as he is able, we will restrict how far he is
+            # able to walk by the distance he is willing to walk.
+            if willing_distance < able_distance:
+                able_distance = willing_distance
+            # Now we can find all the available sectors that the passenger can move to
+            available_sectors = []
+            available_sectors.extend(matrix.get_sectors_within_distance(able_distance, LightStatus.GREEN))
+            available_sectors.extend(matrix.get_sectors_within_distance(able_distance, LightStatus.YELLOW))
+            available_sectors.extend(matrix.get_sectors_within_distance(able_distance, LightStatus.RED))
 
-            closest_green_sector = matrix.get_closest(LightStatus.GREEN)
-            try:
-                green_distance = sector_distance(sector, closest_green_sector)
-                can_move_to_green_sector = able_distance >= green_distance
-            except TypeError:
-                can_move_to_green_sector = False
-
-            closest_yellow_sector = matrix.get_closest(LightStatus.YELLOW)
-            try:
-                yellow_distance = sector_distance(sector, closest_yellow_sector)
-                can_move_to_yellow_sector = able_distance >= yellow_distance
-            except TypeError:
-                can_move_to_yellow_sector = False
-
-            closest_red_sector = matrix.get_closest(LightStatus.RED)
-            try:
-                red_distance = sector_distance(sector, closest_red_sector)
-                can_move_to_red_sector = able_distance >= red_distance
-            except TypeError:
-                can_move_to_red_sector = False
-
-            if closest_green_sector is not None and can_move_to_green_sector:
-                sector.remove_passenger(passenger)
-                closest_green_sector.add(passenger)
-                amount_moved += 1
-                moved_to = closest_green_sector.sector_index
-            elif closest_yellow_sector is not None and can_move_to_yellow_sector:
-                sector.remove_passenger(passenger)
-                closest_yellow_sector.add(passenger)
-                amount_moved += 1
-                moved_to = closest_yellow_sector.sector_index
-            elif closest_red_sector is not None and can_move_to_red_sector:
-                sector.remove_passenger(passenger)
-                closest_red_sector.add(passenger)
-                amount_moved += 1
-                moved_to = closest_red_sector.sector_index
+            if len(available_sectors) > 0:
+                chosen_sector = available_sectors[0]
+                for available_sector in available_sectors:
+                    if available_sector.amount < chosen_sector.amount:
+                        chosen_sector = available_sector
             else:
-                self.logger.info(
-                    "Could not move passenger {} from sector {} due to no light within able distance".format(
-                        passenger.id, sector.sector_index))
-
-        moved_to = moved_to if amount_moved > 0 else sector.sector_index
-
-        self.logger.info(
-            "Moved {} passengers from sector {} with a total of {} to {} due to no light".format(amount_moved,
-                                                                                                 sector.sector_index,
-                                                                                                 amount_to_move,
-                                                                                                 moved_to))
+                self.logger.warning("Chosen to move to a sector without lights")
+                chosen_sector = sector
+            chosen_sector.add(passenger)
 
     def __handle_green_light(self, matrix: SectorDistance, sector: StationSector, environment: Environment) -> None:
         """
@@ -148,14 +121,14 @@ class PassengerDecisionEvent(Event):
         for passenger in sector.passengers:
             able_distance = self.__time_to_move / passenger.speed
 
-            closest_green_sector = matrix.get_closest(LightStatus.GREEN)
+            closest_green_sector = matrix.get_sector_within_distance(able_distance, LightStatus.GREEN, True)
             try:
                 green_distance = sector_distance(sector, closest_green_sector)
                 can_move_to_green_sector = able_distance <= green_distance
             except TypeError:
                 can_move_to_green_sector = False
 
-            closest_yellow_sector = matrix.get_closest(LightStatus.YELLOW)
+            closest_yellow_sector = matrix.get_sector_within_distance(able_distance, LightStatus.YELLOW, True)
             try:
                 yellow_distance = sector_distance(sector, closest_yellow_sector)
                 can_move_to_yellow_sector = able_distance <= yellow_distance
@@ -170,12 +143,6 @@ class PassengerDecisionEvent(Event):
                 sector.remove_passenger(passenger)
                 closest_yellow_sector.add(passenger)
                 amount_moved += 1
-            else:
-                closest_red_sector = matrix.get_sector_within_distance(able_distance, LightStatus.RED, True)
-                if closest_red_sector.amount < sector.amount:
-                    sector.remove_passenger(passenger)
-                    closest_red_sector.add(passenger)
-                    amount_moved += 1
 
         self.logger.info("Moved {} passengers from sector {} due to red light".format(amount_moved,
                                                                                       sector.sector_index))

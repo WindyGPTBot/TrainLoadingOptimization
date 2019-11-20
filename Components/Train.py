@@ -169,8 +169,16 @@ class Train(PopulatableComponent):
         Returns: A list of the newly created train sets
         """
         sets: List[TrainSet] = []
+        car_index = 0
         for i in range(configuration.train_amount_of_sets):
-            sets.append(TrainSet(i, configuration))
+            cars: List[TrainCar] = []
+            for j in range(configuration.train_set_setup):
+                cars.append(TrainCar(j, car_index, configuration))
+                car_index += 1
+            s = TrainSet(cars, i, configuration)
+            for c in s.cars:
+                c.train_set = s
+            sets.append(s)
         return sets
 
     @property

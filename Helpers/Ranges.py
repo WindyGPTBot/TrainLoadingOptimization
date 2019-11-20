@@ -1,4 +1,9 @@
+from typing import TypeVar, List
+
 from numpy import random
+from random import choice
+
+T = TypeVar("T")
 
 
 def random_between_range(seed: int, rang: range) -> int:
@@ -28,3 +33,6 @@ def random_between_percentage(seed: int, rang: range, max_cap: int) -> float:
     """
     return random_between_range(seed, rang) / 100 * max_cap
 
+
+def random_choice(choices: List[T]) -> T:
+    return choice(choices)

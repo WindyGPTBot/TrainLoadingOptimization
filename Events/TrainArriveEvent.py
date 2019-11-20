@@ -43,9 +43,14 @@ class TrainArriveEvent(Event):
         for sector in environment.station.sectors:
             if sector.has_train_car():
                 amount_leaving = passengers_leaving_amount[sector.sector_index]
-                events.append(
-                    UnloadPassengerEvent(sector.train_car, sector, amount_leaving, self.timestamp, self.configuration))
-            else:
+                if amount_leaving > 0:
+                    events.append(
+                        UnloadPassengerEvent(sector.train_car, sector, amount_leaving, self.timestamp,
+                                             self.configuration))
+                else:
+                    events.append(
+                        LoadPassengerEvent(sector, sector.amount, self.timestamp, self.configuration))
+            elif sector.amount > 0:
                 events.append(MovePassengerEvent(sector, sector.amount, self.timestamp, self.configuration))
         return events
 
@@ -58,9 +63,6 @@ class TrainArriveEvent(Event):
             A dictionary that maps the sector index to how many
             leaves from the train car at that station sector.
         """
-        if isinstance(self.configuration.train_unload_percent, (list, dict)):
-            return self.configuration.train_unload_percent
-
         unload_range = self.configuration.train_unload_percent
 
         sector_index = environment.train.parked_at
@@ -69,16 +71,20 @@ class TrainArriveEvent(Event):
 
         for train_set in environment.train.train_sets:
             for train_car in train_set.cars:
-                # We first randomly choose using the configuration
-                # how many passengers should leave this car
-                passenger_count = len(train_car.passengers)
-                nr_leaving = random_between_percentage(
-                    self.configuration.environment_random_seed,
-                    unload_range,
-                    passenger_count
-                )
-                # Add the amount leaving mapped by the sector index
-                amounts[sector_index] = int(nr_leaving)
+                if isinstance(self.configuration.train_unload_percent, (list, dict)):
+                    amounts[sector_index] = int(
+                        self.configuration.train_unload_percent[sector_index - environment.train.parked_at])
+                else:
+                    # We first randomly choose using the configuration
+                    # how many passengers should leave this car
+                    passenger_count = len(train_car.passengers)
+                    nr_leaving = random_between_percentage(
+                        self.configuration.environment_random_seed,
+                        unload_range,
+                        passenger_count
+                    )
+                    # Add the amount leaving mapped by the sector index
+                    amounts[sector_index] = int(nr_leaving)
                 # Increment the indexes
                 sector_index += 1
 
