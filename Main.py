@@ -4,6 +4,7 @@ import logging.config
 
 from Distributions.NormalDistribution import NormalDistribution
 from Runtimes.ApplicationRuntime import ApplicationRunTime
+from Helpers.Graph.Graph import SimpleGraph
 
 options: dict = {
     "passenger_weight_distribution": NormalDistribution(80, 10),
@@ -33,7 +34,7 @@ options: dict = {
     "environment_random_seed": None
 }
 
-def start_simulation(verbose=False):
+def start_simulation(verbose=False, plot=False):
     # Create the logger configuration from the json file
     with open('logging.json', 'rt') as f:
         config = json.load(f)
@@ -51,16 +52,16 @@ def start_simulation(verbose=False):
         application.run()
         samples.append(application)
 
-    from Helpers.Graph.Graph import SimpleGraph
-    s_graph = SimpleGraph(
-        samples,
-        # Values in X
-        x_param='environment.station.initial_passenger_amount',
-        # Values in Y
-        y_param='environment.timings.turn_around_time',
-        # Different plots if this value changes under the simulation (or before=
-        comparison_param='configuration.station_have_lights')
-    s_graph.draw()
+    if plot:
+        s_graph = SimpleGraph(
+            samples,
+            # Values in X
+            x_param='environment.station.initial_passenger_amount',
+            # Values in Y
+            y_param='environment.timings.turn_around_time',
+            # Different plots if this value changes under the simulation (or before=
+            comparison_param='configuration.station_have_lights')
+        s_graph.draw()
 
 
 def introduction():
@@ -106,16 +107,20 @@ def usage():
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], ":hv", ["help"])
+        opts, args = getopt.getopt(sys.argv[1:], ":hvp", ["help"])
     except getopt.GetoptError as err:
         print(err)
         usage()
         sys.exit(2)
+
     verbose = False
+    plot_graph = False
 
     for o, a in opts:
         if o in ("-v", "--verbose"):
             verbose = True
+        elif o in ("-p", "--plot-graph"):
+            plot_graph = True
         elif o in ("-h", "--help"):
             usage()
             sys.exit()
@@ -124,7 +129,8 @@ def main():
 
     ## Starts simulation
     introduction()
-    start_simulation(verbose)
+    start_simulation(verbose, plot_graph)
+    sys.exit()
 
 if __name__ == "__main__":
     main()
