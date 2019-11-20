@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import List
 
 from Components.StationSector import StationSector
-from Components.TrainCar import TrainCar
 from Events.Event import Event
 from Events.MovePassengerEvent import MovePassengerEvent
 from Events.PrepareTrainEvent import PrepareTrainEvent
@@ -15,6 +14,7 @@ class LoadPassengerEvent(Event):
     """
     Event representing the loading of passengers
     """
+    HIGHEST = None
 
     def __init__(self, sector: StationSector, amount: int, timestamp: datetime, configuration: Configuration):
         self.sector: StationSector = sector
@@ -65,8 +65,11 @@ class LoadPassengerEvent(Event):
                                                                                         train_car.train_set.index,
                                                                                         self.sector.sector_index))
 
+        if self.HIGHEST is None or self.timestamp > self.HIGHEST:
+            self.HIGHEST = self.timestamp
+
         if amount_to_move > 0:
             return [MovePassengerEvent(self.sector, amount_to_move, self.timestamp, self.configuration)]
-        elif environment.station.is_empty():
-            return [PrepareTrainEvent(self.timestamp, self.configuration)]
+        elif environment.station.is_empty() or environment.train.is_full():
+            return [PrepareTrainEvent(self.HIGHEST, self.configuration)]
         return []

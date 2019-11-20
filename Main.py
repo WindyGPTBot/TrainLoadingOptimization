@@ -4,7 +4,7 @@ import logging.config
 
 from Distributions.NormalDistribution import NormalDistribution
 from Runtimes.ApplicationRuntime import ApplicationRunTime
-from Helpers.Graph.Graph import SimpleGraph
+from Helpers.Graph.Graph import SimpleGraph, DictGraph
 
 options: dict = {
     "passenger_weight_distribution": NormalDistribution(80, 10),
@@ -15,19 +15,16 @@ options: dict = {
     "passenger_max_walk_range": range(16, 16),
     "passenger_compliance": 1,
     "train_capacity": 100,
-    "train_fullness": range(30, 60),
-    "train_unload_percent": range(100, 100),
-    "train_capacity": 75,
     "train_fullness": range(30, 50),
-    "train_unload_percent": [30, 40, 30, 50, 60, 30, 40, 50],
+    "train_unload_percent": [30, 30, 30, 30, 30, 30, 30, 30],
     "train_set_setup": 4,
     "train_amount_of_sets": 2,
     "train_park_at_index": 8,
     "station_sector_count": 16,
     "station_distance": 3.0,
-    "station_stairs_placement": [3],
+    "station_stairs_placement": [3, 14],
     "station_sector_passenger_max_count": 100,
-    "station_sector_fullness": range(50, 80),
+    "station_sector_fullness": range(20, 40),
     "station_stair_factor": 1.5,
     "station_light_thresholds": {"green": .5, "yellow": .75},
     "station_have_lights": False,
@@ -36,6 +33,7 @@ options: dict = {
     "time_door_action": 4,
     "environment_random_seed": 30
 }
+
 
 def start_simulation(silence=False, plot=False):
     # Create the logger configuration from the json file
@@ -52,27 +50,24 @@ def start_simulation(silence=False, plot=False):
     }
 
     changes = {
-        'station_sector_passenger_max_count': [10, 20,30,40,50,60,70,80,90,100,200,300],
+        'station_sector_passenger_max_count': [30, 50, 55, 60, 65, 70, 75],
     }
     samples = []
 
     print("Running simulation...")
 
-    for k, vls in plots.items():
-        for v in vls:
-            for key, values in changes.items():
-                for value in values:
-                    options[key] = value
-                    options[k] = v
-                    application = ApplicationRunTime(options)
-                    application.run()
-                    samples.append(application)
+    for key, values in changes.items():
+        for value in values:
+            options[key] = value
+            application = ApplicationRunTime(options)
+            application.run()
+            samples.append(application)
 
     print("Simulations finished.")
 
-    if plot:
+    if not plot:
         print("Plotting graph...")
-        s_graph = SimpleGraph(
+        s_graph = DictGraph(
             samples,
             # Values in X
             x_param='environment.station.initial_passenger_amount',
@@ -119,6 +114,7 @@ def introduction():
 
     print('{}{}'.format(PRESENTATION, TRAIN))
 
+
 def usage():
     introduction()
     instructions = """
@@ -127,6 +123,7 @@ def usage():
              -p, --plot-graph  Draw a graph with the simulation result
     """
     print(instructions)
+
 
 def main():
     try:
@@ -154,6 +151,7 @@ def main():
     introduction()
     start_simulation(silence, plot_graph)
     sys.exit()
+
 
 if __name__ == "__main__":
     main()

@@ -47,11 +47,14 @@ class TrainArriveEvent(Event):
                     events.append(
                         UnloadPassengerEvent(sector.train_car, sector, amount_leaving, self.timestamp,
                                              self.configuration))
+                    self.logger.info("Unloading {} in sector {}".format(amount_leaving, sector.sector_index))
                 else:
                     events.append(
                         LoadPassengerEvent(sector, sector.amount, self.timestamp, self.configuration))
+                    self.logger.info("Loading {} in sector {}".format(sector.amount, sector.sector_index))
             elif sector.amount > 0:
                 events.append(MovePassengerEvent(sector, sector.amount, self.timestamp, self.configuration))
+                self.logger.info("Moving {} in sector {}".format(sector.amount, sector.sector_index))
         return events
 
     def __decide_unloading_count(self, environment: Environment) -> Dict[int, int]:
@@ -71,13 +74,15 @@ class TrainArriveEvent(Event):
 
         for train_set in environment.train.train_sets:
             for train_car in train_set.cars:
+                passenger_count = train_car.amount
                 if isinstance(self.configuration.train_unload_percent, (list, dict)):
-                    amounts[sector_index] = int(
-                        self.configuration.train_unload_percent[sector_index - environment.train.parked_at])
+                    percent_leaving = self.configuration.train_unload_percent[
+                        sector_index - environment.train.parked_at]
+                    nr_leaving = (percent_leaving / 100) * passenger_count
+                    amounts[sector_index] = int(nr_leaving)
                 else:
                     # We first randomly choose using the configuration
                     # how many passengers should leave this car
-                    passenger_count = len(train_car.passengers)
                     nr_leaving = random_between_percentage(
                         self.configuration.environment_random_seed,
                         unload_range,

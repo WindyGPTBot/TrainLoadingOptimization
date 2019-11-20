@@ -40,7 +40,6 @@ class PassengerDecisionEvent(Event):
         return []
 
     def __handle_none_light(self, matrix: SectorDistance, sector: StationSector, environment: Environment) -> None:
-
         for i in range(sector.amount):
             # Remove the passenger from the current sector
             passenger = sector.remove(1)[0]
@@ -67,6 +66,8 @@ class PassengerDecisionEvent(Event):
             else:
                 self.logger.warning("Chosen to move to a sector without lights")
                 chosen_sector = sector
+            self.logger.info("Moved passenger from {} to {} due to no light".format(sector.sector_index,
+                                                                                    chosen_sector.sector_index))
             chosen_sector.add(passenger)
 
     def __handle_green_light(self, matrix: SectorDistance, sector: StationSector, environment: Environment) -> None:

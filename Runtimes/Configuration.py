@@ -195,7 +195,7 @@ class Configuration:
 
     @station_have_lights.setter
     def station_have_lights(self, have_lights: bool):
-        self.__options['station_have_lights'] = have_lights
+        self.__station_have_lights = have_lights
 
     @property
     def train_fullness(self) -> range:

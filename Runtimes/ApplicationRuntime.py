@@ -19,6 +19,8 @@ class ApplicationRunTime(RunTime):
         """
         self.configuration = Configuration(options)
         self.environment = Environment(self.configuration) if environment is None else environment
+        self.with_lights = 0
+        self.without_lights = 0
 
     def run(self) -> None:
         name = 'environment.pickle'
@@ -26,18 +28,13 @@ class ApplicationRunTime(RunTime):
 
         self.configuration.station_have_lights = False
 
-        tas = {'with': 0, 'without': 0}
-
-        # Run the events x times
         event_runtime = EventRunTime(self.configuration, p.read(name))
         event_runtime.run()
-        tas['without'] += event_runtime.environment.timings.turn_around_time
+        self.without_lights = event_runtime.environment.timings.turn_around_time
 
         self.configuration.station_have_lights = True
 
         # Run the events x times
         event_runtime = EventRunTime(self.configuration, p.read(name))
         event_runtime.run()
-        tas['with'] += event_runtime.environment.timings.turn_around_time
-
-        print('with: {}, without: {}'.format(tas['with'], tas['without']))
+        self.with_lights = event_runtime.environment.timings.turn_around_time
