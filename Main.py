@@ -15,7 +15,7 @@ options: dict = {
     "passenger_max_walk_range": range(16, 16),
     "passenger_compliance": 1,
     "train_capacity": 100,
-    "train_fullness": range(50, 100),
+    "train_fullness": range(30, 60),
     "train_unload_percent": [30, 30, 30, 30, 30, 30, 30, 30],
     "train_set_setup": 4,
     "train_amount_of_sets": 2,
@@ -24,14 +24,14 @@ options: dict = {
     "station_distance": 3.0,
     "station_stairs_placement": [3, 14],
     "station_sector_passenger_max_count": 100,
-    "station_sector_fullness": range(30, 60),
+    "station_sector_fullness": range(20, 30),
     "station_stair_factor": 1.5,
     "station_light_thresholds": {"green": .5, "yellow": .75},
     "station_have_lights": False,
     "time_send_weight_event": 0,
     "time_receive_weight_event": 0,
     "time_door_action": 4,
-    "environment_random_seed": 10
+    "environment_random_seed": 30
 }
 
 

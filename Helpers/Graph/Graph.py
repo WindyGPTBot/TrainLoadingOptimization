@@ -37,7 +37,7 @@ class Graph(ABC):
         self.x_param = x_param
 
         # Optional arguments
-        self.file_format = kwargs.get('file_format', 'svg').replace('.', '')
+        self.file_format = kwargs.get('file_format', 'png').replace('.', '')
         self.file_name = kwargs.get('file_name', self.__class__.__name__.lower())
         self.title = kwargs.get('title', 'Result')
 
