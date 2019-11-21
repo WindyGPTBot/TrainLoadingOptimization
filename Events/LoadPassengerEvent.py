@@ -65,9 +65,8 @@ class LoadPassengerEvent(Event):
                                                                                         train_car.train_set.index,
                                                                                         self.sector.sector_index))
 
-
         if amount_to_move > 0:
             return [MovePassengerEvent(self.sector, amount_to_move, self.timestamp, self.configuration)]
         elif environment.station.is_empty() or environment.train.is_full():
-            return [PrepareTrainEvent(self.HIGHEST, self.configuration)]
+            return [PrepareTrainEvent(self.timestamp, self.configuration)]
         return []
