@@ -4,7 +4,7 @@ import logging.config
 
 from Distributions.NormalDistribution import NormalDistribution
 from Runtimes.ApplicationRuntime import ApplicationRunTime
-from Helpers.Graph.Graph import SimpleGraph, DictGraph
+from Helpers.Graph.Graph import SimpleGraph
 
 options: dict = {
     "passenger_weight_distribution": NormalDistribution(80, 10),
@@ -15,7 +15,7 @@ options: dict = {
     "passenger_max_walk_range": range(16, 16),
     "passenger_compliance": 1,
     "train_capacity": 100,
-    "train_fullness": range(30, 50),
+    "train_fullness": range(50, 100),
     "train_unload_percent": [30, 30, 30, 30, 30, 30, 30, 30],
     "train_set_setup": 4,
     "train_amount_of_sets": 2,
@@ -24,14 +24,14 @@ options: dict = {
     "station_distance": 3.0,
     "station_stairs_placement": [3, 14],
     "station_sector_passenger_max_count": 100,
-    "station_sector_fullness": range(20, 40),
+    "station_sector_fullness": range(30, 60),
     "station_stair_factor": 1.5,
     "station_light_thresholds": {"green": .5, "yellow": .75},
     "station_have_lights": False,
     "time_send_weight_event": 0,
     "time_receive_weight_event": 0,
     "time_door_action": 4,
-    "environment_random_seed": 30
+    "environment_random_seed": 10
 }
 
 
@@ -44,30 +44,37 @@ def start_simulation(silence=False, plot=False):
     # Toggles logging
     logging.disable() if silence else None
 
-    # Stores the simulation samples
+    # Stores simulation examples
+    samples = []
+
+    # Possible combinations for the simulation
     plots = {
         'station_have_lights': [True, False]
     }
 
     changes = {
-        'station_sector_passenger_max_count': [30, 50, 55, 60, 65, 70, 75],
+        'station_sector_passenger_max_count': [30, 50, 55, 60, 65, 70, 80, 85, 90]
     }
-    samples = []
 
+    # We run different simulations with the different parameters saved above
+    # Here we modify the options. We plot different values for 'plots' together with 'changes'
     print("Running simulation...")
 
-    for key, values in changes.items():
-        for value in values:
-            options[key] = value
-            application = ApplicationRunTime(options)
-            application.run()
-            samples.append(application)
+    for k, vls in plots.items():
+        for v in vls:
+            for key, values in changes.items():
+                for value in values:
+                    options[k] = v
+                    options[key] = value
+                    application = ApplicationRunTime(options)
+                    application.run()
+                    samples.append(application)
 
     print("Simulations finished.")
 
-    if not plot:
+    if plot:
         print("Plotting graph...")
-        s_graph = DictGraph(
+        s_graph = SimpleGraph(
             samples,
             # Values in X
             x_param='environment.station.initial_passenger_amount',
@@ -147,7 +154,7 @@ def main():
         else:
             assert False, "unhandled option"
 
-    ## Starts simulation
+    # Starts simulation
     introduction()
     start_simulation(silence, plot_graph)
     sys.exit()

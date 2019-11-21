@@ -59,37 +59,6 @@ class Graph(ABC):
         raise NotImplementedError("Method not implemented in {}".format(self.__class__.__name__))
 
 
-class DictGraph(Graph):
-
-    def __init__(
-            self,
-            samples: List[ApplicationRunTime],
-            x_param: str,
-            y_param: str,
-            comparison_param: str,
-            *args,
-            **kwargs):
-        self.without_lights = []
-        self.with_lights = []
-        super().__init__(samples, x_param, y_param, comparison_param, args, kwargs)
-
-    def compile_data(self) -> None:
-        for sample in self.samples:
-            self.without_lights.append(sample.without_lights)
-            self.with_lights.append(sample.with_lights)
-
-    def draw(self) -> None:
-        self.compile_data()
-        plt.plot(self.without_lights)
-        plt.plot(self.with_lights)
-        plt.legend(['Without Lights', 'With Lights'], loc='upper left')
-        plt.ylabel('Turn around time')
-        plt.xlabel('Configuration')
-        plt.savefig('graph.svg')
-        plt.savefig('graph.png')
-        plt.show()
-
-
 class SimpleGraph(Graph):
     def compile_data(self) -> None:
         """
