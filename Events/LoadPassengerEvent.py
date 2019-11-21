@@ -65,8 +65,6 @@ class LoadPassengerEvent(Event):
                                                                                         train_car.train_set.index,
                                                                                         self.sector.sector_index))
 
-        if self.HIGHEST is None or self.timestamp > self.HIGHEST:
-            self.HIGHEST = self.timestamp
 
         if amount_to_move > 0:
             return [MovePassengerEvent(self.sector, amount_to_move, self.timestamp, self.configuration)]
