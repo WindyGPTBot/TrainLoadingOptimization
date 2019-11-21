@@ -21,6 +21,5 @@ class ApplicationRunTime(RunTime):
         self.environment = Environment(self.configuration) if environment is None else environment
 
     def run(self) -> None:
-        # Run the events x times
         event_runtime = EventRunTime(self.configuration, self.environment)
         event_runtime.run()
