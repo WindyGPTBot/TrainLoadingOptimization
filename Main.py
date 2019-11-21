@@ -127,20 +127,20 @@ def usage():
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], ":hsp", ["help"])
+        opts, args = getopt.getopt(sys.argv[1:], ":hsn", ["help"])
     except getopt.GetoptError as err:
         print(err)
         usage()
         sys.exit(2)
 
     silence = False
-    plot_graph = False
+    plot_graph = True
 
     for o, a in opts:
         if o in ("-s", "--silence"):
             silence = True
-        elif o in ("-p", "--plot-graph"):
-            plot_graph = True
+        elif o in ("-n", "--no-plotting"):
+            plot_graph = False
         elif o in ("-h", "--help"):
             usage()
             sys.exit()
