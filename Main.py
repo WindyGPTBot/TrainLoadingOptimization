@@ -4,7 +4,7 @@ import logging.config
 
 from Distributions.NormalDistribution import NormalDistribution
 from Runtimes.ApplicationRuntime import ApplicationRunTime
-from Helpers.Graph.Graph import SimpleGraph
+from Helpers.Graph.Graph import DictGraph
 
 options: dict = {
     "passenger_weight_distribution": NormalDistribution(80, 10),
