@@ -18,6 +18,10 @@ class Graph(ABC):
             x_param: str,
             y_param: str,
             comparison_param: str,
+            x_title: str = None,
+            y_title: str = None,
+            legend: List[str] = None,
+            title: str = None,
             *args,
             **kwargs
     ):
@@ -31,6 +35,9 @@ class Graph(ABC):
             *args:
             **kwargs:
         """
+        self.legend = legend
+        self.x_title = x_title
+        self.y_title = y_title
         self.samples = samples
         self.comparison_param = comparison_param
         self.y_param = y_param
@@ -39,7 +46,7 @@ class Graph(ABC):
         # Optional arguments
         self.file_format = kwargs.get('file_format', 'png').replace('.', '')
         self.file_name = kwargs.get('file_name', self.__class__.__name__.lower())
-        self.title = kwargs.get('title', 'Result')
+        self.title = title if title is not None else kwargs.get('title', 'Result')
 
         # ...
         self.axes = {}
@@ -67,7 +74,6 @@ class SimpleGraph(Graph):
 
         for i, r in enumerate(self.samples):
             # Get the parameters from the objects
-
             if has_deep_attr(r, self.y_param):
                 y_value = get_deep_attr(r, self.y_param)
             else:
@@ -115,11 +121,16 @@ class SimpleGraph(Graph):
             plt.plot(v_axes[0], v_axes[1], label=key)
 
         # Naming the axes
-        plt.xlabel(self.x_param)
-        plt.ylabel(self.y_param)
+        plt.xlabel(self.x_param if self.x_title is None else self.x_title)
+        plt.ylabel(self.y_param if self.y_title is None else self.y_title)
 
         plt.title(self.title)
-        plt.legend()
+
+        if self.legend is None:
+            plt.legend()
+        else:
+            plt.legend(self.legend)
+
         plt.grid(True)
 
         # Unique name for the figure

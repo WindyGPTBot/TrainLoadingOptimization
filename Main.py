@@ -82,7 +82,11 @@ def start_simulation(silence=False, plot=False):
             # Values in Y
             y_param='environment.timings.turn_around_time',
             # Different plots if this value changes under the simulation (or before=
-            comparison_param='configuration.station_have_lights')
+            comparison_param='configuration.station_have_lights',
+            title='Comparison between with and without lights',
+            x_title='Amount of Passengers Waiting',
+            y_title='Turn Around Time',
+            legend=['With lights', 'Without lights'])
         s_graph.draw()
 
     print("Finished!")
