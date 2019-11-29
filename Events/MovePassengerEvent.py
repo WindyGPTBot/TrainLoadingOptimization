@@ -59,8 +59,19 @@ class MovePassengerEvent(Event):
         else:
             amount_removed = 0
 
-        from Events.LoadPassengerEvent import LoadPassengerEvent
-        return [LoadPassengerEvent(free_sector, amount_removed, self.timestamp, self.configuration)]
+        from Events.LoadPassengerEvent import LoadPassengerEvent, PrepareTrainEvent
+        # Passengers might not have a free sector. In that case we ignore them and call the prepre train event.
+        return [
+            LoadPassengerEvent(
+                free_sector,
+                amount_removed,
+                self.timestamp,
+                self.configuration
+            ) if free_sector else PrepareTrainEvent(
+                self.timestamp,
+                self.configuration
+            )
+        ]
 
     def __get_nearby_free_sector(self, environment: Environment) -> Optional[StationSector]:
         """
