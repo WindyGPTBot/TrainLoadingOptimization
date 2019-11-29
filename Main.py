@@ -15,7 +15,7 @@ options: dict = {
     "passenger_max_walk_range": range(16, 16),
     "passenger_compliance": 1,
     "train_capacity": 100,
-    "train_fullness": range(30, 60),
+    "train_fullness": [30, 40, 25, 33, 52, 30, 25, 60],
     "train_unload_percent": [30, 30, 30, 30, 30, 30, 30, 30],
     "train_set_setup": 4,
     "train_amount_of_sets": 2,

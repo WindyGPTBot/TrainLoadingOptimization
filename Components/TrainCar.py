@@ -18,6 +18,7 @@ class TrainCar(PassengerContainer, Component):
         PassengerContainer.__init__(self)
         self.__weight = 0
         self.__opened = False
+        self.__train_set = None
         self.__index = index
         self.__car_index = car_index
 

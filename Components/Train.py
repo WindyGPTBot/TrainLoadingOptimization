@@ -135,13 +135,18 @@ class Train(PopulatableComponent):
         rang = self.configuration.train_fullness  # Let us get the range of how full we want our train cars
         cap = self.configuration.train_capacity  # Then we get the max capacity
         t_amount = 0
+        index = 0
         for train_set in self.train_sets:
             for car in train_set.cars:
                 # Then we generate a random percentage of the maximum capacity
                 # and then fill the train car with that random amount
-                amount = floor(random_between_percentage(self.configuration.environment_random_seed, rang, cap))
+                if isinstance(self.configuration.train_fullness, range):
+                    amount = floor(random_between_percentage(self.configuration.environment_random_seed, rang, cap))
+                else:
+                    amount = self.configuration.train_fullness[index]
                 car.add(amount, self.configuration)
                 t_amount += amount
+                index += 1
         self.__passenger_init = t_amount
 
     def __getitem__(self, item: int) -> TrainCar:
